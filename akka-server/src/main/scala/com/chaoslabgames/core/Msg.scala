@@ -13,6 +13,7 @@ case object Cmd {
   val TYPE_EVENT = 2
   case object Ping     extends Msg { val code = 1; val stereotype = TYPE_CMD }
   case object Auth     extends Msg { val code = 5; val stereotype = TYPE_CMD }
+  case object Register extends Msg { val code = 10; val stereotype = TYPE_CMD }
   case object AuthResp extends Msg { val code = 6; val stereotype = TYPE_EVENT }
   case object AuthErr  extends Msg { val code = 7; val stereotype = TYPE_EVENT }
   case object Join     extends Msg { val code = 8; val stereotype = TYPE_EVENT }
@@ -22,9 +23,12 @@ case object Cmd {
 class Cmd(val msg:Msg, val data:Any)
 case class AuthReqData(name:String, password:String)
 case class AuthRespData(id:Long)
+case class AuthFailedData(reason:Int)
 
 case class AuthCmd(override val data:AuthReqData) extends Cmd(Cmd.Auth, data)
+case class RegisterCmd(override val data:AuthReqData) extends Cmd(Cmd.Register, data)
 case class AuthEvent(override val data:AuthRespData) extends Cmd(Cmd.AuthResp, data)
+case class AuthErrEvent(override val data:AuthFailedData) extends Cmd(Cmd.AuthErr, data)
 
 
 

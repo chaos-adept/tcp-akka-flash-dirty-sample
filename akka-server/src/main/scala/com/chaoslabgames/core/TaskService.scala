@@ -11,7 +11,7 @@ class TaskService extends Actor with ActorLogging {
   import TaskService._
 
   // -----
-//  val authService = context.actorSelection("akka://server/user/auth")
+  val authService = context.actorSelection("akka://akka-server/user/auth")
 //  val gameService = context.actorSelection("akka://server/user/game")
 
   // ----- actor -----
@@ -37,7 +37,10 @@ class TaskService extends Actor with ActorLogging {
       case auth:AuthCmd =>
         //authService ! AuthService.Authenticate(task.session, task.comm)
         log.info("auth user name: {} / password: {}", auth.data.name, auth.data.password)
-        task.session ! AuthEvent(AuthRespData(123))
+        authService ! task
+      case register:RegisterCmd =>
+        log.info("register user name: {} / password: {}", register.data.name, register.data.password)
+        authService ! task
       //case Cmd.Join.code =>
         //gameService ! GmService.JoinGame(task.session)
       //case Cmd.Move.code =>
