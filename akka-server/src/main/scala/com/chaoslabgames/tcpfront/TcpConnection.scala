@@ -10,6 +10,7 @@ import akka.util.ByteString
 import com.chaoslabgames.core.{ActorSelectors, Cmd, Msg, TaskService}
 import com.chaoslabgames.packet.PacketMSG
 import com.chaoslabgames.session.Session
+import com.chaoslabgames.utils.ActorUtils
 
 import scala.concurrent.duration._
 
@@ -26,10 +27,10 @@ class TcpConnection(
   import TcpConnection._
   import context._
 
-  val taskService = context.actorSelection(ActorSelectors.task) //fixme move to factory actor
+  val taskService = ActorUtils.getSingleActorRefFromPath(context, ActorSelectors.task) //fixme move to factory actor
 
   // -----
-  val session = context.actorOf(Session.props(id, self, )) //fixme move to factory actor
+  val session = context.actorOf(Session.props(id, self, taskService.get())) //fixme move to factory actor
 
   // ----- heartbeat -----
   private var scheduler: Cancellable = _

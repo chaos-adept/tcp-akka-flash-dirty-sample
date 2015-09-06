@@ -1,7 +1,8 @@
 package com.chaoslabgames
 
 import akka.actor.{Props, ActorRef, ActorSystem}
-import akka.testkit.{ImplicitSender, TestKit, TestProbe}
+import akka.testkit.{TestActorRef, ImplicitSender, TestKit, TestProbe}
+import com.chaoslabgames.core.TaskService.CommandTask
 import com.chaoslabgames.core._
 import com.chaoslabgames.session.Session
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
@@ -35,8 +36,10 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSe
     "send request area-classes to task actor" in withConnAndTask{ {
       (connection, taskService, session) =>
         session ! AuthCmd(AuthReqData("test", "test"))
+
+        taskService.expectMsg(CommandTask(session, AuthCmd(AuthReqData("test", "test"))))
         taskService.reply(AuthEvent(AuthRespData(123)))
-        taskService.expectMsg(AuthCmd(AuthReqData("test", "test")))
+
         connection.expectMsg(AuthEvent(AuthRespData(123)))
     }}
   }
