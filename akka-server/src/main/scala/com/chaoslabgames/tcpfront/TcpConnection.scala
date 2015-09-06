@@ -7,7 +7,7 @@ import akka.io.Tcp
 import akka.io.Tcp.Write
 import akka.io.TcpPipelineHandler.{Init, WithinActorContext}
 import akka.util.ByteString
-import com.chaoslabgames.core.{Cmd, Msg, TaskService}
+import com.chaoslabgames.core.{ActorSelectors, Cmd, Msg, TaskService}
 import com.chaoslabgames.packet.PacketMSG
 import com.chaoslabgames.session.Session
 
@@ -26,8 +26,10 @@ class TcpConnection(
   import TcpConnection._
   import context._
 
+  val taskService = context.actorSelection(ActorSelectors.task) //fixme move to factory actor
+
   // -----
-  val session = context.actorOf(Session.props(id, self))
+  val session = context.actorOf(Session.props(id, self, )) //fixme move to factory actor
 
   // ----- heartbeat -----
   private var scheduler: Cancellable = _

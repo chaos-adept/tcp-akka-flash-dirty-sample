@@ -17,10 +17,8 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSe
     try {
       val connectionProbe: TestProbe = TestProbe()
       val taskServiceProbe: TestProbe = TestProbe()
-      val taskService = system.actorOf(Props[TaskService], "task")
-      taskServiceProbe.watch(taskService)
 
-      val session: ActorRef = system.actorOf(Session.props(1, connectionProbe.testActor))
+      val session: ActorRef = system.actorOf(Session.props(1, connectionProbe.testActor, taskServiceProbe.testActor))
 
       testCode(connectionProbe, taskServiceProbe, session) // "loan" the fixture to the test
     }
@@ -37,6 +35,8 @@ class SessionSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSe
     "send request area-classes to task actor" in withConnAndTask{ {
       (connection, taskService, session) =>
         session ! AuthCmd(AuthReqData("test", "test"))
+        taskService.reply(AuthEvent(AuthRespData(123)))
+        taskService.expectMsg(AuthCmd(AuthReqData("test", "test")))
         connection.expectMsg(AuthEvent(AuthRespData(123)))
     }}
   }
