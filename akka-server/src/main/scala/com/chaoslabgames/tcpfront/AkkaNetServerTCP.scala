@@ -5,9 +5,7 @@ import java.nio.ByteOrder
 
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.io.Tcp._
-import akka.io._
-import akka.io.{TcpReadWriteAdapter, TcpPipelineHandler, LengthFieldFrame}
-import com.chaoslabgames.session.Session
+import akka.io.{LengthFieldFrame, TcpPipelineHandler, TcpReadWriteAdapter, _}
 
 
 class AkkaNetServerTCP(address: String, port: Int) extends Actor with ActorLogging {
@@ -41,12 +39,12 @@ class AkkaNetServerTCP(address: String, port: Int) extends Actor with ActorLoggi
     val init = TcpPipelineHandler.withLogger(log, framer >> new TcpReadWriteAdapter)
 
     idCounter += 1
-    val sessionProps = Session.props(idCounter, sender, init, remote, local)
-    val session = context.actorOf(sessionProps, remote.toString.replace("/", ""))
-
-    val pipeline = context.actorOf(TcpPipelineHandler.props(init, sender, session))
+    val tcpSessionProps = TcpConnection.props(idCounter, sender, init)
+    val tcpSession = context.actorOf(tcpSessionProps)
+    val pipeline = context.actorOf(TcpPipelineHandler.props(init, sender, tcpSession))
 
     sender ! Register(pipeline)
+
   }
 }
 

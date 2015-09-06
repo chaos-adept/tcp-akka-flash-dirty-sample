@@ -2,7 +2,6 @@ package com.chaoslabgames.core
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.chaoslabgames.packet.{LoginResp, PacketMSG}
-import com.chaoslabgames.session.Session
 
 /**
  * @author <a href="mailto:denis.rykovanov@gmail.com">Denis Rykovanov</a>
@@ -34,15 +33,14 @@ class TaskService extends Actor with ActorLogging {
 
   // ----- handles -----
   def handlePacket(task: CommandTask) = {
-    task.comm.getCmd match {
-      case Cmd.Auth.code =>
+    task.cmd match {
+      case auth:AuthCmd =>
         //authService ! AuthService.Authenticate(task.session, task.comm)
-        val login:LoginResp.Builder = LoginResp.newBuilder()
-        login.setId(123)
-        task.session ! Session.Send(Cmd.AuthResp, login.build().toByteArray)
-      case Cmd.Join.code =>
+        log.info("auth user name: {} / password: {}", auth.data.name, auth.data.password)
+        task.session ! AuthEvent(AuthRespData(123))
+      //case Cmd.Join.code =>
         //gameService ! GmService.JoinGame(task.session)
-      case Cmd.Move.code =>
+      //case Cmd.Move.code =>
         //gameService ! Room.PlayerMove(task.session, task.comm)
       case _ => log.info("Crazy message")
     }
@@ -52,5 +50,5 @@ class TaskService extends Actor with ActorLogging {
 object TaskService {
 
   // ----- API -----
-  case class CommandTask(session: ActorRef, comm: PacketMSG)
+  case class CommandTask(session: ActorRef, cmd: Cmd)
 }
