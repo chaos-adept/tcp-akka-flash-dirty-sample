@@ -33,6 +33,9 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
     case Event(cmd:CreateRoomCmd, authData:Authorized) =>
       taskService ! TaskService.CreateRoomTask(self, authData.userId, cmd.data.name)
       stay()
+    case Event(AuthCmd | RegisterCmd, authData:Authorized) =>
+      connection ! AuthRequiredEvent(AuthFailedData(3))
+      stay()
   }
 
   whenUnhandled {
