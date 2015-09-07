@@ -2,6 +2,7 @@ package com.chaoslabgames.core
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.chaoslabgames.packet.{LoginResp, PacketMSG}
+import com.chaoslabgames.session.Session
 
 /**
  * @author <a href="mailto:denis.rykovanov@gmail.com">Denis Rykovanov</a>
@@ -21,7 +22,8 @@ class TaskService extends Actor with ActorLogging {
 
   override def receive = {
     case task: CommandTask => handlePacket(task)
-
+    case cr:CreateRoomTask =>
+      cr.session ! RoomCreatedEvent(CreatedRoomData(cr.roomName, 1, cr.userId))
     case _ => log.info("unknown message")
   }
 
@@ -34,7 +36,7 @@ class TaskService extends Actor with ActorLogging {
   // ----- handles -----
   def handlePacket(task: CommandTask) = {
     task.cmd match {
-      case auth:AuthCmd =>
+      case auth:AuthCmd => //fixme replace cmd by tasks
         //authService ! AuthService.Authenticate(task.session, task.comm)
         log.info("auth user name: {} / password: {}", auth.data.name, auth.data.password)
         authService ! task
@@ -54,4 +56,5 @@ object TaskService {
 
   // ----- API -----
   case class CommandTask(session: ActorRef, cmd: Cmd)
+  case class CreateRoomTask(session: ActorRef, userId:Long, roomName:String)
 }

@@ -44,6 +44,14 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
     }
   }
 
+  def withRegisteredUser(user:User, testCode:(TestActorsRefs, User) => Any) = {
+    withEmptyActors { actors =>
+      actors.session ! RegisterCmd(AuthReqData(user.name, user.password))
+      actors.conn.expectMsgClass(classOf[AuthEvent])
+      testCode(actors, user)
+    }
+  }
+
   override def afterAll() = {
     TestKit.shutdownActorSystem(system)
   }
@@ -58,12 +66,20 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
     actors.conn.expectMsg(AuthEvent(AuthRespData(1)))
   }
 
-  it should "auth all registered" in withRegisteredUsers(Set(new User(1, "test", "test"), new User(2, "test2", "test2")), {
-    (actors: TestActorsRefs, users: Set[User]) =>
-      users.foreach { user =>
-        actors.session ! AuthCmd(AuthReqData(user.name, user.password))
-        actors.conn.expectMsgClass(classOf[AuthEvent])
-      }
+  it should "auth registered" in withRegisteredUser(new User(1, "test", "test"), {
+    (actors: TestActorsRefs, user: User) =>
+    actors.session ! AuthCmd(AuthReqData(user.name, user.password))
+    actors.conn.expectMsgClass(classOf[AuthEvent])
+  })
+
+  it should "unauth is not able to create room" in withEmptyActors({ (actors) =>
+    actors.session ! CreateRoomCmd(CreateRoomData("test room"))
+    actors.conn.expectMsg(AuthRequiredEvent(AuthFailedData(2)))
+  })
+
+  it should "auth user is able to create room" in withRegisteredUser(new User(1, "test", "test"), { (actors, user) =>
+    actors.session ! CreateRoomCmd(CreateRoomData("test room"))
+    actors.conn.expectMsg(RoomCreatedEvent(CreatedRoomData("test room", 1, 1)))
   })
 
 }
