@@ -39,6 +39,7 @@ class AuthService extends Actor with ActorLogging {
     idCounter += 1
     val user = new User(idCounter, data.name, data.password)
     registeredUsers += user
+    log.info("registered user {}", user.name)
     session ! AuthEvent(AuthRespData(user.id))
   }
 }
