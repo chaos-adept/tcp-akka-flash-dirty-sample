@@ -1,13 +1,10 @@
 package com.chaoslabgames.utils
 
 import java.util.Optional
-import java.util.concurrent.TimeUnit
 
 import akka.actor._
-import akka.util.Timeout
-import org.omg.CORBA.TIMEOUT
 
-import scala.concurrent.{Future, Await}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 /**
