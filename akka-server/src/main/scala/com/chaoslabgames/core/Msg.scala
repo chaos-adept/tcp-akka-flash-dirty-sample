@@ -15,7 +15,7 @@ case object Cmd {
   case object Auth     extends Msg { val code = 5; val stereotype = TYPE_CMD }
   case object AuthResp extends Msg { val code = 6; val stereotype = TYPE_EVENT }
   case object AuthErr  extends Msg { val code = 7; val stereotype = TYPE_EVENT }
-  case object Join     extends Msg { val code = 8; val stereotype = TYPE_EVENT }
+  case object Join     extends Msg { val code = 8; val stereotype = TYPE_EVENT; override val authRequired = true }
   case object Move     extends Msg { val code = 9; val stereotype = TYPE_CMD }
 
   case object CreateRoom      extends Msg { val code = 11; val stereotype = TYPE_CMD; override val authRequired = true }
@@ -23,6 +23,7 @@ case object Cmd {
   case object Register        extends Msg { val code = 13; val stereotype = TYPE_CMD }
   case object GetRoomList        extends Msg { val code = 14; val stereotype = TYPE_CMD; override val authRequired = true }
   case object RetRoomList        extends Msg { val code = 15; val stereotype = TYPE_EVENT }
+  case object Joinned        extends Msg { val code = 16; val stereotype = TYPE_EVENT }
 }
 
 class Cmd(val msg:Msg, val data:Any)
@@ -43,7 +44,8 @@ case class CreateRoomCmd(override val data:CreateRoomData) extends Cmd(Cmd.Creat
 case class RoomCreatedEvent(override val data:RoomData) extends Cmd(Cmd.CreatedRoom, data)
 case object GetRoomListCmd extends Cmd(Cmd.GetRoomList, null)
 case class RoomListEvent(override val data:RoomListData) extends Cmd(Cmd.RetRoomList, data)
-
+case class JoinEvent(userId:Long, roomId:Long) extends Cmd(Cmd.Joinned, null)
+case class JoinCmd(roomId:Long) extends Cmd(Cmd.Join, null)
 
 
 

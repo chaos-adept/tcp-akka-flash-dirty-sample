@@ -34,6 +34,8 @@ class TaskService extends Actor with ActorLogging {
       val room = RoomData(cr.roomName, idCounter, cr.userId)
       rooms += room
       cr.session ! RoomCreatedEvent(room)
+    case jt:JoinTask =>
+      jt.session ! JoinEvent(jt.userId, jt.roomId)
     case _ => log.info("unknown message")
   }
 
@@ -70,5 +72,7 @@ object TaskService {
   case class CommandTask(session: ActorRef, cmd: Cmd)
 
   case class CreateRoomTask(session: ActorRef, userId: Long, roomName: String)
+
+  case class JoinTask(session: ActorRef, roomId:Long, userId:Long)
 
 }

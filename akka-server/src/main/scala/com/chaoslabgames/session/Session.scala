@@ -33,6 +33,9 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
     case Event(cmd:CreateRoomCmd, authData:Authorized) =>
       taskService ! TaskService.CreateRoomTask(self, authData.userId, cmd.data.name)
       stay()
+    case Event(cmd:JoinCmd, authData:Authorized) =>
+      taskService ! TaskService.JoinTask(self, cmd.roomId, authData.userId)
+      stay()
     case Event(AuthCmd | RegisterCmd, authData:Authorized) =>
       connection ! AuthRequiredEvent(AuthFailedData(3))
       stay()
@@ -54,15 +57,14 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
           }
           else {
             log.info("send cmd as task {}", m)
-
             taskService ! CommandTask(self, m)
           }
         case Cmd.TYPE_EVENT =>
-          log.info("send event to connection")
+          log.info("send event to connection {}", m)
           connection ! m
         case _ => log.info("unknown message stereotype {}")
       }
-      case _ => log.info("unknown message type {}")
+      case unknown => log.info("unknown message type {}", unknown)
     }
   }
 

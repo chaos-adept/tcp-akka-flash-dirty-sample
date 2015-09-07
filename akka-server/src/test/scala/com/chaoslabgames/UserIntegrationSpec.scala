@@ -16,6 +16,8 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
   def this() = this(ActorSystem("akka-server"))
 
   val aUser = new User(1, "test", "test")
+  val aRoom = RoomData("room 1", 1, aUser.id)
+
   case class TestActorsRefs(conn: TestProbe, taskService: ActorRef, session: ActorRef, authService: ActorRef)
 
   def withEmptyActors(testCode: TestActorsRefs => Any) {
@@ -53,6 +55,14 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
     }
   }
 
+  def withRoom(owner:User, room:RoomData, testCode:(TestActorsRefs, User, RoomData) => Any) ={
+    withRegisteredUser(owner, { (actors, user) =>
+      actors.session ! CreateRoomCmd(CreateRoomData("test room"))
+      actors.conn.expectMsgClass(classOf[RoomCreatedEvent])
+      testCode(actors, user, room)
+    })
+  }
+
   override def afterAll() = {
     TestKit.shutdownActorSystem(system)
   }
@@ -83,14 +93,18 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
     actors.conn.expectMsg(RoomCreatedEvent(RoomData("test room", 1, 1)))
   })
 
-  it should "auth user is able to get list of rooms" in withRegisteredUser(aUser, { (actors, user) =>
-    actors.session ! CreateRoomCmd(CreateRoomData("room 1"))
-    actors.session ! CreateRoomCmd(CreateRoomData("room 2"))
-    actors.conn.expectMsgClass(classOf[RoomCreatedEvent])
-    actors.conn.expectMsgClass(classOf[RoomCreatedEvent])
-    actors.session ! GetRoomListCmd
-
-    actors.conn.expectMsg(RoomListEvent(RoomListData(Set(RoomData("room 1", 1,  aUser.id), RoomData("room 2", 2, aUser.id)))))
+  it should "allow user to join to the room" in withRoom(aUser, aRoom, { (actors, user, room) =>
+    actors.session ! JoinCmd(room.roomId)
+    actors.conn.expectMsg(JoinEvent(aUser.id, room.roomId))
   })
+
+//  it should "auth user is able to get list of rooms" in withRegisteredUser(aUser, { (actors, user) =>
+//    actors.session ! CreateRoomCmd(CreateRoomData("room 1"))
+//    actors.session ! CreateRoomCmd(CreateRoomData("room 2"))
+//    actors.conn.expectMsgClass(classOf[RoomCreatedEvent])
+//    actors.conn.expectMsgClass(classOf[RoomCreatedEvent])
+//    actors.session ! GetRoomListCmd
+//    actors.conn.expectMsg(RoomListEvent(RoomListData(Set(RoomData("room 1", 1,  aUser.id), RoomData("room 2", 2, aUser.id)))))
+//  })
 
 }
