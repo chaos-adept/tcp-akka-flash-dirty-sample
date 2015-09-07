@@ -15,6 +15,7 @@ import org.scalatest._
 class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSender with FlatSpecLike with Matchers with BeforeAndAfterAll {
   def this() = this(ActorSystem("akka-server"))
 
+  val aUser = new User(1, "test", "test")
   case class TestActorsRefs(conn: TestProbe, taskService: ActorRef, session: ActorRef, authService: ActorRef)
 
   def withEmptyActors(testCode: TestActorsRefs => Any) {
@@ -66,7 +67,7 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
     actors.conn.expectMsg(AuthEvent(AuthRespData(1)))
   }
 
-  it should "auth registered" in withRegisteredUser(new User(1, "test", "test"), {
+  it should "auth registered" in withRegisteredUser(aUser, {
     (actors: TestActorsRefs, user: User) =>
     actors.session ! AuthCmd(AuthReqData(user.name, user.password))
     actors.conn.expectMsgClass(classOf[AuthEvent])
@@ -77,9 +78,19 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
     actors.conn.expectMsg(AuthRequiredEvent(AuthFailedData(2)))
   })
 
-  it should "auth user is able to create room" in withRegisteredUser(new User(1, "test", "test"), { (actors, user) =>
+  it should "auth user is able to create room" in withRegisteredUser(aUser, { (actors, user) =>
     actors.session ! CreateRoomCmd(CreateRoomData("test room"))
-    actors.conn.expectMsg(RoomCreatedEvent(CreatedRoomData("test room", 1, 1)))
+    actors.conn.expectMsg(RoomCreatedEvent(RoomData("test room", 1, 1)))
+  })
+
+  it should "auth user is able to get list of rooms" in withRegisteredUser(aUser, { (actors, user) =>
+    actors.session ! CreateRoomCmd(CreateRoomData("room 1"))
+    actors.session ! CreateRoomCmd(CreateRoomData("room 2"))
+    actors.conn.expectMsgClass(classOf[RoomCreatedEvent])
+    actors.conn.expectMsgClass(classOf[RoomCreatedEvent])
+    actors.session ! GetRoomListCmd
+
+    actors.conn.expectMsg(RoomListEvent(RoomListData(Set(RoomData("room 1", 1,  aUser.id), RoomData("room 2", 2, aUser.id)))))
   })
 
 }

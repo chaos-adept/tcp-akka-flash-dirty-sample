@@ -19,25 +19,30 @@ case object Cmd {
   case object Move     extends Msg { val code = 9; val stereotype = TYPE_CMD }
 
   case object CreateRoom      extends Msg { val code = 11; val stereotype = TYPE_CMD; override val authRequired = true }
-  case object CreatedRoom      extends Msg { val code = 11; val stereotype = TYPE_EVENT; override val authRequired = true }
-  case object Register        extends Msg { val code = 10; val stereotype = TYPE_CMD }
+  case object CreatedRoom      extends Msg { val code = 12; val stereotype = TYPE_EVENT; override val authRequired = true }
+  case object Register        extends Msg { val code = 13; val stereotype = TYPE_CMD }
+  case object GetRoomList        extends Msg { val code = 14; val stereotype = TYPE_CMD; override val authRequired = true }
+  case object RetRoomList        extends Msg { val code = 15; val stereotype = TYPE_EVENT }
 }
 
-class Cmd(val msg:Msg, val data:Any, authorization:Option[Long])
+class Cmd(val msg:Msg, val data:Any)
 
 case class AuthReqData(name:String, password:String)
 case class AuthRespData(id:Long)
 case class AuthFailedData(reason:Int)
 case class CreateRoomData(name:String)
-case class CreatedRoomData(name:String, roomId:Long, ownerId:Long)
+case class RoomData(name:String, roomId:Long, ownerId:Long)
+case class RoomListData(rooms:Set[RoomData])
 
-case class AuthCmd(override val data:AuthReqData) extends Cmd(Cmd.Auth, data, Option.empty)
-case class RegisterCmd(override val data:AuthReqData) extends Cmd(Cmd.Register, data, Option.empty)
-case class AuthEvent(override val data:AuthRespData) extends Cmd(Cmd.AuthResp, data, Option.empty)
-case class AuthRequiredEvent(override val data:AuthFailedData) extends Cmd(Cmd.AuthResp, data, Option.empty)
-case class AuthErrEvent(override val data:AuthFailedData) extends Cmd(Cmd.AuthErr, data, Option.empty)
-case class CreateRoomCmd(override val data:CreateRoomData) extends Cmd(Cmd.CreateRoom, data, Option.empty)
-case class RoomCreatedEvent(override val data:CreatedRoomData) extends Cmd(Cmd.CreatedRoom, data, Option.empty)
+case class AuthCmd(override val data:AuthReqData) extends Cmd(Cmd.Auth, data)
+case class RegisterCmd(override val data:AuthReqData) extends Cmd(Cmd.Register, data)
+case class AuthEvent(override val data:AuthRespData) extends Cmd(Cmd.AuthResp, data)
+case class AuthRequiredEvent(override val data:AuthFailedData) extends Cmd(Cmd.AuthResp, data)
+case class AuthErrEvent(override val data:AuthFailedData) extends Cmd(Cmd.AuthErr, data)
+case class CreateRoomCmd(override val data:CreateRoomData) extends Cmd(Cmd.CreateRoom, data)
+case class RoomCreatedEvent(override val data:RoomData) extends Cmd(Cmd.CreatedRoom, data)
+case object GetRoomListCmd extends Cmd(Cmd.GetRoomList, null)
+case class RoomListEvent(override val data:RoomListData) extends Cmd(Cmd.RetRoomList, data)
 
 
 
