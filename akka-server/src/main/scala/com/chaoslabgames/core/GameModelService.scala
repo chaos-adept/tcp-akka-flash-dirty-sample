@@ -2,7 +2,7 @@ package com.chaoslabgames.core
 
 import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorLogging}
-import com.chaoslabgames.core.GameModelService.{ListRoom, CreateRoom}
+import com.chaoslabgames.core.GameModelService.{LeaveRoom, JoinRoom, ListRoom, CreateRoom}
 import com.chaoslabgames.core.datavalue.DataValue.{RoomListData, AuthSessionInfo, RoomData}
 
 import scala.collection.mutable.ListBuffer
@@ -24,11 +24,17 @@ class GameModelService extends Actor with ActorLogging {
       session ! RoomCreatedEvent(room)
     case ListRoom(session) =>
       session ! RoomListEvent(RoomListData(rooms.toSet))
+    case JoinRoom(session, roomId) =>
+      session ! JoinEvent(session.userId, roomId)
+    case LeaveRoom(session, roomId) =>
+      session ! LeaveEvent(session.userId, roomId)
   }
 
 }
 
 object GameModelService {
   case class CreateRoom(session:AuthSessionInfo, roomName:String)
+  case class JoinRoom(session:AuthSessionInfo, roomId:Long)
+  case class LeaveRoom(session:AuthSessionInfo, roomId:Long)
   case class ListRoom(session:AuthSessionInfo)
 }

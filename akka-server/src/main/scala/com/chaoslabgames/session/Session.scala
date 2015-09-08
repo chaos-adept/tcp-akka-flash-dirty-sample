@@ -32,14 +32,11 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
       taskService ! TaskService.CreateRoomTask(authData.session, cmd.data.name)
       stay()
     case Event(cmd:JoinCmd, authData:Authorized) =>
-      taskService ! TaskService.JoinTask(RoomSessionInfo(cmd.roomId, authData.session))
+      taskService ! TaskService.JoinTask(authData.session, cmd.roomId)
       stay()
-    case Event(cmd:LeaveCmd, authData:InRoomData) =>
-      taskService ! TaskService.LeaveTask(RoomSessionInfo(authData.roomId, authData.session))
+    case Event(cmd:LeaveCmd, authData:Authorized) =>
+      taskService ! TaskService.LeaveTask(authData.session, cmd.roomId)
       stay()
-    case Event(je:JoinEvent, authData:Authorized) =>
-      forwardMessage(je)
-      stay using new InRoomData(authData.session, je.roomId)
     case Event(AuthCmd | RegisterCmd, authData:Authorized) =>
       connection ! AuthRequiredEvent(AuthFailedData(3))
       stay()
@@ -93,6 +90,5 @@ object Session {
   case object Unauthorized extends Data
 
   class Authorized(val session: AuthSessionInfo) extends Data { override val authorized = true }
-  class InRoomData(override val session: AuthSessionInfo, val roomId:Long) extends Authorized(session)
 
 }

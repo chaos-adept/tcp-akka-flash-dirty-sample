@@ -30,10 +30,12 @@ class TaskService extends Actor with ActorLogging {
     case task: CommandTask => handlePacket(task)
     case CreateRoomTask(session, roomName) =>
       gameModelService ! GameModelService.CreateRoom(session, roomName)
-    case JoinTask(RoomSessionInfo(roomId, session)) =>
-      session ! JoinEvent(session.userId, roomId)
-    case LeaveTask(RoomSessionInfo(roomId, session)) =>
-      session ! LeaveEvent(session.userId, roomId)
+    case JoinTask(session, roomId) =>
+      //session ! JoinEvent(session.userId, roomId)
+      gameModelService ! GameModelService.JoinRoom(session, roomId)
+    case LeaveTask(session, roomId) =>
+      //session ! LeaveEvent(session.userId, roomId)
+      gameModelService ! GameModelService.LeaveRoom(session, roomId)
     case GetRoomListTask(session) =>
       gameModelService ! GameModelService.ListRoom(session)
     case _ => log.info("unknown message")
@@ -67,9 +69,9 @@ object TaskService {
 
   case class CreateRoomTask(session:AuthSessionInfo, roomName: String)
 
-  case class JoinTask(session:RoomSessionInfo)
+  case class JoinTask(session:AuthSessionInfo, roomId:Long)
 
-  case class LeaveTask(session:RoomSessionInfo)
+  case class LeaveTask(session:AuthSessionInfo, roomId:Long)
 
   case class GetRoomListTask(session: AuthSessionInfo)
 
