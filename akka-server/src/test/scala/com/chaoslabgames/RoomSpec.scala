@@ -31,6 +31,7 @@ class RoomSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSende
 
 
   override protected def beforeAll() = {
+    val gameModelService: ActorRef = system.actorOf(Props[GameModelService], "gameModel")
     taskService = system.actorOf(Props[TaskService], "task")
     val authService: ActorRef = system.actorOf(Props[AuthService], "auth")
 
