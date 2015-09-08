@@ -20,7 +20,7 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
         case auth:AuthEvent =>
           log.info("sessin is authenticated for userId: {}", auth.data.id)
           forwardMessage(msg)
-          goto(AuthState) using Authorized(AuthSessionInfo(auth.data.id, self) replying (msg)
+          goto(AuthState) using Authorized(AuthSessionInfo(auth.data.id, self)) replying (msg)
         case _ =>
           forwardMessage(msg)
           stay()
@@ -39,7 +39,7 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
       taskService ! TaskService.LeaveTask(RoomSessionInfo(authData.roomId, authData.session))
       stay()
     case Event(JoinEvent(userId, roomId), authData:Authorized) =>
-      stay using InRoomData(authData.session, authData.roomId)
+      stay using InRoomData(authData.session, roomId)
     case Event(AuthCmd | RegisterCmd, authData:Authorized) =>
       connection ! AuthRequiredEvent(AuthFailedData(3))
       stay()

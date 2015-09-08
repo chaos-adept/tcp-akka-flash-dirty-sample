@@ -4,6 +4,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.chaoslabgames.auth.AuthService
 import com.chaoslabgames.core._
+import com.chaoslabgames.core.datavalue.DataValue.{RoomData, CreateRoomData}
 import com.chaoslabgames.core.user.User
 import com.chaoslabgames.session.Session
 import org.scalatest._
