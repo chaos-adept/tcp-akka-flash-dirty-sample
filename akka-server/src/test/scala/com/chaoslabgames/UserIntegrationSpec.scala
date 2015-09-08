@@ -98,6 +98,11 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
     actors.conn.expectMsg(JoinEvent(aUser.id, room.roomId))
   })
 
+  it should "allow user to leave from the room" in withRoom(aUser, aRoom, { (actors, user, room) =>
+    actors.session ! LeaveCmd(room.roomId)
+    actors.conn.expectMsg(LeaveEvent(aUser.id, room.roomId))
+  })
+
 //  it should "auth user is able to get list of rooms" in withRegisteredUser(aUser, { (actors, user) =>
 //    actors.session ! CreateRoomCmd(CreateRoomData("room 1"))
 //    actors.session ! CreateRoomCmd(CreateRoomData("room 2"))

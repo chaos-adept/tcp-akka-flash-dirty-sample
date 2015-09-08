@@ -36,6 +36,8 @@ class TaskService extends Actor with ActorLogging {
       cr.session ! RoomCreatedEvent(room)
     case jt:JoinTask =>
       jt.session ! JoinEvent(jt.userId, jt.roomId)
+    case lt:LeaveTask =>
+      lt.session ! LeaveEvent(lt.userId, lt.roomId)
     case _ => log.info("unknown message")
   }
 
@@ -74,5 +76,7 @@ object TaskService {
   case class CreateRoomTask(session: ActorRef, userId: Long, roomName: String)
 
   case class JoinTask(session: ActorRef, roomId:Long, userId:Long)
+
+  case class LeaveTask(session: ActorRef, roomId:Long, userId:Long)
 
 }
