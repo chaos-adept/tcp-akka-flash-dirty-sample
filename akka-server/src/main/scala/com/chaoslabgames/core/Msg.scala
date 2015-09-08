@@ -26,6 +26,8 @@ case object Cmd {
   case object Joinned        extends Msg { val code = 16; val stereotype = TYPE_EVENT }
   case object Leave        extends Msg { val code = 17; val stereotype = TYPE_CMD; override val authRequired = true}
   case object Leaved        extends Msg { val code = 18; val stereotype = TYPE_EVENT }
+  case object ChatCmd        extends Msg { val code = 19; val stereotype = TYPE_CMD; override val authRequired = true }
+  case object ChatEvent        extends Msg { val code = 20; val stereotype = TYPE_EVENT }
 }
 
 class Cmd(val msg:Msg, val data:Any)
@@ -52,5 +54,7 @@ case class JoinCmd(roomId:Long) extends Cmd(Cmd.Join, null)
 case class LeaveCmd(roomId:Long) extends Cmd(Cmd.Leave, null)
 case class LeaveEvent(userId:Long, roomId:Long) extends Cmd(Cmd.Leaved, null)
 
+case class ChatCmd(text:String, roomId:Long) extends Cmd(Cmd.ChatCmd, null)
+case class ChatEvent(text:String, userId:Long, roomId:Long) extends Cmd(Cmd.ChatEvent, null)
 
 

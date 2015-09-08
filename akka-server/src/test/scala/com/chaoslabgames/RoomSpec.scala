@@ -26,9 +26,11 @@ class RoomSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSende
 
   val defRoomsInfo = Seq((defUsersForRoom1, aOwner1), (defUsersForRoom2, aOwner2))
   var roomsInfo:Seq[RoomInfo] = null
+  var taskService:ActorRef = null
+
 
   override protected def beforeAll() = {
-    val taskService: ActorRef = system.actorOf(Props[TaskService], "task")
+    taskService = system.actorOf(Props[TaskService], "task")
     val authService: ActorRef = system.actorOf(Props[AuthService], "auth")
 
     roomsInfo = defRoomsInfo.map {case (users, owner) =>
@@ -59,14 +61,21 @@ class RoomSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSende
     TestKit.shutdownActorSystem(system)
   }
 
-  it should "execute" in {
+  it should " send message to all users in the room " in {
+    val targetRoom = roomsInfo.head
+    val author = targetRoom.users.head
 
+    author.session ! ChatCmd("hi room", targetRoom.roomData.roomId)
+    
+    targetRoom.users.foreach { user =>
+      user.connection.expectMsg(ChatEvent("hi room", targetRoom.roomData.roomId, author.userId))
+    }
   }
 
 }
 
 object RoomSpec {
-  case class RoomInfo(rommData:RoomData, roomUsers:Set[AuthUser])
+  case class RoomInfo(roomData:RoomData, users:Set[AuthUser])
   case class UserCred(name:String, password:String)
   case class AuthUser(userId:Long, userCred:UserCred, session: ActorRef, connection: TestProbe)
 
