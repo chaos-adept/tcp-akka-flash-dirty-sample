@@ -8,8 +8,9 @@ import akka.actor.ActorRef
  */
 object DataValue {
   case class CreateRoomData(name:String)
-  case class RoomData(name:String, roomId:Long, ownerId:Long)
+  case class RoomData(val name:String, val roomId:Long, val ownerId:Long)
   case class RoomListData(rooms:Set[RoomData])
   case class AuthSessionInfo(userId:Long, out:ActorRef) { def !(msg:Any) = { out ! msg } }
   case class RoomSessionInfo(roomId:Long, session: AuthSessionInfo)
+  class ChatMsgData(val text:String, val roomId:Long, val author: AuthSessionInfo)
 }

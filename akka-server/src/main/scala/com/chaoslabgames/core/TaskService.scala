@@ -1,7 +1,7 @@
 package com.chaoslabgames.core
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
-import com.chaoslabgames.core.datavalue.DataValue.{RoomSessionInfo, AuthSessionInfo, RoomListData}
+import com.chaoslabgames.core.datavalue.DataValue._
 import com.chaoslabgames.core.user.User
 import com.chaoslabgames.packet.{LoginResp, PacketMSG}
 import com.chaoslabgames.session.Session
@@ -31,13 +31,13 @@ class TaskService extends Actor with ActorLogging {
     case CreateRoomTask(session, roomName) =>
       gameModelService ! GameModelService.CreateRoom(session, roomName)
     case JoinTask(session, roomId) =>
-      //session ! JoinEvent(session.userId, roomId)
       gameModelService ! GameModelService.JoinRoom(session, roomId)
     case LeaveTask(session, roomId) =>
-      //session ! LeaveEvent(session.userId, roomId)
       gameModelService ! GameModelService.LeaveRoom(session, roomId)
     case GetRoomListTask(session) =>
       gameModelService ! GameModelService.ListRoom(session)
+    case ChatTask(data) =>
+      gameModelService ! GameModelService.Chat(data)
     case _ => log.info("unknown message")
   }
 
@@ -57,7 +57,7 @@ class TaskService extends Actor with ActorLogging {
       case register: RegisterCmd =>
         log.info("register user name: {} / password: {}", register.data.name, register.data.password)
         authService ! task
-      case _ => log.info("Crazy message")
+      case unknown:Any => log.info("Crazy message {}", unknown)
     }
   }
 }
@@ -74,5 +74,7 @@ object TaskService {
   case class LeaveTask(session:AuthSessionInfo, roomId:Long)
 
   case class GetRoomListTask(session: AuthSessionInfo)
+
+  case class ChatTask(data:ChatMsgData)
 
 }

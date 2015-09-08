@@ -3,7 +3,7 @@ package com.chaoslabgames.session
 import akka.actor._
 import com.chaoslabgames.core.TaskService.CommandTask
 import com.chaoslabgames.core._
-import com.chaoslabgames.core.datavalue.DataValue.{RoomSessionInfo, AuthSessionInfo}
+import com.chaoslabgames.core.datavalue.DataValue.{ChatMsgData, RoomSessionInfo, AuthSessionInfo}
 import com.chaoslabgames.session.Session._
 
 /**
@@ -39,6 +39,9 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
       stay()
     case Event(AuthCmd | RegisterCmd, authData:Authorized) =>
       connection ! AuthRequiredEvent(AuthFailedData(3))
+      stay()
+    case Event(cmd:ChatCmd, authData:Authorized) =>
+      taskService ! TaskService.ChatTask(new ChatMsgData(cmd.text, cmd.roomId, authData.session))
       stay()
   }
 
