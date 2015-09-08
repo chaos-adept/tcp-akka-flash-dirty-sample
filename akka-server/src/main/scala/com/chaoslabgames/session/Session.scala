@@ -3,8 +3,7 @@ package com.chaoslabgames.session
 import akka.actor._
 import com.chaoslabgames.core.TaskService.CommandTask
 import com.chaoslabgames.core._
-
-import scala.collection.parallel.immutable
+import com.chaoslabgames.core.datavalue.DataValue.{RoomSessionInfo, AuthSessionInfo}
 import com.chaoslabgames.session.Session._
 
 /**
@@ -21,7 +20,7 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
         case auth:AuthEvent =>
           log.info("sessin is authenticated for userId: {}", auth.data.id)
           forwardMessage(msg)
-          goto(AuthState) using Authorized(auth.data.id) replying (msg)
+          goto(AuthState) using Authorized(AuthSessionInfo(auth.data.id, self) replying (msg)
         case _ =>
           forwardMessage(msg)
           stay()
@@ -31,14 +30,16 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
 
   when(AuthState) {
     case Event(cmd:CreateRoomCmd, authData:Authorized) =>
-      taskService ! TaskService.CreateRoomTask(self, authData.userId, cmd.data.name)
+      taskService ! TaskService.CreateRoomTask(authData.session, cmd.data.name)
       stay()
     case Event(cmd:JoinCmd, authData:Authorized) =>
-      taskService ! TaskService.JoinTask(self, cmd.roomId, authData.userId)
+      taskService ! TaskService.JoinTask(RoomSessionInfo(cmd.roomId, authData.session))
       stay()
-    case Event(cmd:LeaveCmd, authData:Authorized) =>
-      taskService ! TaskService.LeaveTask(self, cmd.roomId, authData.userId)
+    case Event(cmd:LeaveCmd, authData:InRoomData) =>
+      taskService ! TaskService.LeaveTask(RoomSessionInfo(authData.roomId, authData.session))
       stay()
+    case Event(JoinEvent(userId, roomId), authData:Authorized) =>
+      stay using InRoomData(authData.session, authData.roomId)
     case Event(AuthCmd | RegisterCmd, authData:Authorized) =>
       connection ! AuthRequiredEvent(AuthFailedData(3))
       stay()
@@ -91,6 +92,7 @@ object Session {
 
   case object Unauthorized extends Data
 
-  case class Authorized(userId: Long) extends Data { override val authorized = true }
+  case class Authorized(session: AuthSessionInfo) extends Data { override val authorized = true }
+  case class InRoomData(override val session: AuthSessionInfo, roomId:Long) extends Authorized(session)
 
 }

@@ -1,6 +1,6 @@
 package com.chaoslabgames.core
 
-import com.chaoslabgames.core.Cmd.Auth
+import com.chaoslabgames.core.datavalue.DataValue.{CreateRoomData, RoomData, RoomListData}
 
 /**
  * @author <a href="mailto:denis.rykovanov@gmail.com">Denis Rykovanov</a>
@@ -35,9 +35,7 @@ class Cmd(val msg:Msg, val data:Any)
 case class AuthReqData(name:String, password:String)
 case class AuthRespData(id:Long)
 case class AuthFailedData(reason:Int)
-case class CreateRoomData(name:String)
-case class RoomData(name:String, roomId:Long, ownerId:Long)
-case class RoomListData(rooms:Set[RoomData])
+
 
 case class AuthCmd(override val data:AuthReqData) extends Cmd(Cmd.Auth, data)
 case class RegisterCmd(override val data:AuthReqData) extends Cmd(Cmd.Register, data)

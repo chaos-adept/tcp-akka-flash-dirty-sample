@@ -1,6 +1,7 @@
 package com.chaoslabgames.core
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
+import com.chaoslabgames.core.datavalue.DataValue.{RoomSessionInfo, AuthSessionInfo, RoomListData}
 import com.chaoslabgames.core.user.User
 import com.chaoslabgames.packet.{LoginResp, PacketMSG}
 import com.chaoslabgames.session.Session
@@ -17,10 +18,8 @@ class TaskService extends Actor with ActorLogging {
 
   // -----
   val authService = context.actorSelection("akka://akka-server/user/auth")
+  val gameModelService = context.actorSelection("akka://akka-server/user/gamemodel")
   //  val gameService = context.actorSelection("akka://server/user/game")
-
-  var idCounter: Long = 0l
-  val rooms = new ListBuffer[RoomData]
 
   // ----- actor -----
   override def preStart() {
@@ -29,15 +28,14 @@ class TaskService extends Actor with ActorLogging {
 
   override def receive = {
     case task: CommandTask => handlePacket(task)
-    case cr: CreateRoomTask =>
-      idCounter += 1
-      val room = RoomData(cr.roomName, idCounter, cr.userId)
-      rooms += room
-      cr.session ! RoomCreatedEvent(room)
-    case jt:JoinTask =>
-      jt.session ! JoinEvent(jt.userId, jt.roomId)
-    case lt:LeaveTask =>
-      lt.session ! LeaveEvent(lt.userId, lt.roomId)
+    case CreateRoomTask(session, roomName) =>
+      gameModelService ! GameModelService.CreateRoom(session, roomName)
+    case JoinTask(RoomSessionInfo(roomId, session)) =>
+      session.out ! JoinEvent(session.userId, roomId)
+    case LeaveTask(RoomSessionInfo(roomId, session)) =>
+      session.out ! LeaveEvent(session.userId, roomId)
+    case GetRoomListTask(session) =>
+      gameModelService ! GameModelService.ListRoom(session)
     case _ => log.info("unknown message")
   }
 
@@ -57,12 +55,6 @@ class TaskService extends Actor with ActorLogging {
       case register: RegisterCmd =>
         log.info("register user name: {} / password: {}", register.data.name, register.data.password)
         authService ! task
-      case GetRoomListCmd =>
-        task.session ! RoomListEvent(RoomListData(rooms.toSet))
-      //case Cmd.Join.code =>
-      //gameService ! GmService.JoinGame(task.session)
-      //case Cmd.Move.code =>
-      //gameService ! Room.PlayerMove(task.session, task.comm)
       case _ => log.info("Crazy message")
     }
   }
@@ -73,10 +65,12 @@ object TaskService {
   // ----- API -----
   case class CommandTask(session: ActorRef, cmd: Cmd)
 
-  case class CreateRoomTask(session: ActorRef, userId: Long, roomName: String)
+  case class CreateRoomTask(session:AuthSessionInfo, roomName: String)
 
-  case class JoinTask(session: ActorRef, roomId:Long, userId:Long)
+  case class JoinTask(session:RoomSessionInfo)
 
-  case class LeaveTask(session: ActorRef, roomId:Long, userId:Long)
+  case class LeaveTask(session:RoomSessionInfo)
+
+  case class GetRoomListTask(session: AuthSessionInfo)
 
 }

@@ -6,6 +6,7 @@ import com.chaoslabgames.ActorTestUtils.fishForMsg
 import com.chaoslabgames.RoomSpec.{AuthUser, RoomInfo, UserCred}
 import com.chaoslabgames.auth.AuthService
 import com.chaoslabgames.core._
+import com.chaoslabgames.core.datavalue.DataValue.{CreateRoomData, RoomData}
 import com.chaoslabgames.session.Session
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 
