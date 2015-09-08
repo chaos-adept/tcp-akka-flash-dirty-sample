@@ -18,7 +18,7 @@ class TaskService extends Actor with ActorLogging {
 
   // -----
   val authService = context.actorSelection("akka://akka-server/user/auth")
-  val gameModelService = context.actorSelection("akka://akka-server/user/gamemodel")
+  val gameModelService = context.actorSelection("akka://akka-server/user/gameModel")
   //  val gameService = context.actorSelection("akka://server/user/game")
 
   // ----- actor -----
@@ -31,9 +31,9 @@ class TaskService extends Actor with ActorLogging {
     case CreateRoomTask(session, roomName) =>
       gameModelService ! GameModelService.CreateRoom(session, roomName)
     case JoinTask(RoomSessionInfo(roomId, session)) =>
-      session.out ! JoinEvent(session.userId, roomId)
+      session ! JoinEvent(session.userId, roomId)
     case LeaveTask(RoomSessionInfo(roomId, session)) =>
-      session.out ! LeaveEvent(session.userId, roomId)
+      session ! LeaveEvent(session.userId, roomId)
     case GetRoomListTask(session) =>
       gameModelService ! GameModelService.ListRoom(session)
     case _ => log.info("unknown message")

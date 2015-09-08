@@ -25,6 +25,7 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
     val connectionProbe: TestProbe = TestProbe()
     val taskService: ActorRef = system.actorOf(Props[TaskService], "task")
     val authService: ActorRef = system.actorOf(Props[AuthService], "auth")
+    val gameModelService: ActorRef = system.actorOf(Props[GameModelService], "gameModel")
     val session: ActorRef = system.actorOf(Session.props(1, connectionProbe.testActor, taskService))
 
     try {
@@ -34,6 +35,7 @@ class UserIntegrationSpec(_system: ActorSystem) extends TestKit(_system) with Im
       system.stop(session)
       system.stop(authService)
       system.stop(taskService)
+      system.stop(gameModelService)
     }
   }
 

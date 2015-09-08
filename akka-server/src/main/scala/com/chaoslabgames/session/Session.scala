@@ -15,17 +15,16 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
   startWith(UnAuthState, Unauthorized)
 
   when(UnAuthState) {
-    case Event(msg, _) => {
+    case Event(msg, _) =>
       msg match {
         case auth:AuthEvent =>
-          log.info("sessin is authenticated for userId: {}", auth.data.id)
+          log.info("session is authenticated for userId: {}", auth.data.id)
           forwardMessage(msg)
-          goto(AuthState) using Authorized(AuthSessionInfo(auth.data.id, self)) replying (msg)
+          goto(AuthState) using new Authorized(AuthSessionInfo(auth.data.id, self)) replying (msg)
         case _ =>
           forwardMessage(msg)
           stay()
       }
-    }
   }
 
   when(AuthState) {
@@ -38,8 +37,9 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
     case Event(cmd:LeaveCmd, authData:InRoomData) =>
       taskService ! TaskService.LeaveTask(RoomSessionInfo(authData.roomId, authData.session))
       stay()
-    case Event(JoinEvent(userId, roomId), authData:Authorized) =>
-      stay using InRoomData(authData.session, roomId)
+    case Event(je:JoinEvent, authData:Authorized) =>
+      forwardMessage(je)
+      stay using new InRoomData(authData.session, je.roomId)
     case Event(AuthCmd | RegisterCmd, authData:Authorized) =>
       connection ! AuthRequiredEvent(AuthFailedData(3))
       stay()
@@ -92,7 +92,7 @@ object Session {
 
   case object Unauthorized extends Data
 
-  case class Authorized(session: AuthSessionInfo) extends Data { override val authorized = true }
-  case class InRoomData(override val session: AuthSessionInfo, roomId:Long) extends Authorized(session)
+  class Authorized(val session: AuthSessionInfo) extends Data { override val authorized = true }
+  class InRoomData(override val session: AuthSessionInfo, val roomId:Long) extends Authorized(session)
 
 }

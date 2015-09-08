@@ -30,7 +30,7 @@ class TcpConnection(
   val taskService = ActorUtils.getSingleActorRefFromPath(context, ActorSelectors.task) //fixme move to factory actor
 
   // -----
-  val session = context.actorOf(Session.props(id, self, taskService.get())) //fixme move to factory actor
+  val session = context.actorOf(Session.props(id, self, taskService.get)) //fixme move to factory actor
 
   // ----- heartbeat -----
   private var scheduler: Cancellable = _
