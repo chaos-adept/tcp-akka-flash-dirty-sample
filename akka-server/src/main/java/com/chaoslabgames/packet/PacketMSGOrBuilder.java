@@ -25,21 +25,21 @@ public interface PacketMSGOrBuilder extends
   boolean getPing();
 
   /**
-   * <code>optional int32 cmd = 2;</code>
+   * <code>optional int32 type = 2;</code>
    *
    * <pre>
    * data
    * </pre>
    */
-  boolean hasCmd();
+  boolean hasType();
   /**
-   * <code>optional int32 cmd = 2;</code>
+   * <code>optional int32 type = 2;</code>
    *
    * <pre>
    * data
    * </pre>
    */
-  int getCmd();
+  int getType();
 
   /**
    * <code>optional bytes data = 3;</code>

@@ -10,33 +10,63 @@ message PacketMSG
   optional bool		ping	= 1;
   
   // data
-  optional int32	cmd    	= 2;
+  optional int32	type   	= 2;
   optional bytes	data    = 3;
 }
 
-message Login
+message LoginCmd
 {
   required string	name   	= 1;
   required string	pass   	= 2;
 }
 
-message LoginResp
+message RegisterCmd
+{
+  required string	name   	= 1;
+  required string	pass   	= 2;
+}
+
+message AuthEvent
 {
   required int64	id  	= 1;
 }
 
-message Join
+message AuthFailed
 {
+  required int32  reasonCode = 1;
 }
 
-message Point
+message JoinCmd
 {
-  required int64	id  	= 1;
-  required int32	x    	= 2;
-  required int32	y    	= 3;
+  required int64  roomId = 1;
 }
 
-message Move
+message LeaveCmd
 {
-  repeated Point	point  	= 1;
+  required int64 roomId = 1;
+}
+
+message JoinEvent
+{
+  required int64 roomId = 1;
+  required int64 userId = 2;
+}
+
+message LeaveEvent
+{
+  required int64 roomId = 1;
+  required int64 userId = 2;
+}
+
+message ChatCmd
+{
+  required int64 roomId = 1;
+  required string text = 2;
+}
+
+message ChatEvent
+{
+  required int64 roomId = 1;
+  required int64 userId = 2;
+  required string text = 3;
 }

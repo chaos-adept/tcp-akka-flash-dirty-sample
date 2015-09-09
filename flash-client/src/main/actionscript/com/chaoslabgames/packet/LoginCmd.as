@@ -10,18 +10,18 @@ package com.chaoslabgames.packet {
 	// @@protoc_insertion_point(imports)
 
 	// @@protoc_insertion_point(class_metadata)
-	public final class Login extends com.netease.protobuf.Message {
+	public final class LoginCmd extends com.netease.protobuf.Message {
 		/**
 		 *  @private
 		 */
-		public static const NAME:FieldDescriptor_TYPE_STRING = new FieldDescriptor_TYPE_STRING("com.chaoslabgames.packet.Login.name", "name", (1 << 3) | com.netease.protobuf.WireType.LENGTH_DELIMITED);
+		public static const NAME:FieldDescriptor_TYPE_STRING = new FieldDescriptor_TYPE_STRING("com.chaoslabgames.packet.LoginCmd.name", "name", (1 << 3) | com.netease.protobuf.WireType.LENGTH_DELIMITED);
 
 		public var name:String;
 
 		/**
 		 *  @private
 		 */
-		public static const PASS:FieldDescriptor_TYPE_STRING = new FieldDescriptor_TYPE_STRING("com.chaoslabgames.packet.Login.pass", "pass", (2 << 3) | com.netease.protobuf.WireType.LENGTH_DELIMITED);
+		public static const PASS:FieldDescriptor_TYPE_STRING = new FieldDescriptor_TYPE_STRING("com.chaoslabgames.packet.LoginCmd.pass", "pass", (2 << 3) | com.netease.protobuf.WireType.LENGTH_DELIMITED);
 
 		public var pass:String;
 
@@ -49,14 +49,14 @@ package com.chaoslabgames.packet {
 				switch (tag >> 3) {
 				case 1:
 					if (name$count != 0) {
-						throw new flash.errors.IOError('Bad data format: Login.name cannot be set twice.');
+						throw new flash.errors.IOError('Bad data format: LoginCmd.name cannot be set twice.');
 					}
 					++name$count;
 					this.name = com.netease.protobuf.ReadUtils.read_TYPE_STRING(input);
 					break;
 				case 2:
 					if (pass$count != 0) {
-						throw new flash.errors.IOError('Bad data format: Login.pass cannot be set twice.');
+						throw new flash.errors.IOError('Bad data format: LoginCmd.pass cannot be set twice.');
 					}
 					++pass$count;
 					this.pass = com.netease.protobuf.ReadUtils.read_TYPE_STRING(input);

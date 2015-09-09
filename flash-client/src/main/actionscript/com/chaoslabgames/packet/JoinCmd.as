@@ -10,20 +10,20 @@ package com.chaoslabgames.packet {
 	// @@protoc_insertion_point(imports)
 
 	// @@protoc_insertion_point(class_metadata)
-	public final class LoginResp extends com.netease.protobuf.Message {
+	public final class JoinCmd extends com.netease.protobuf.Message {
 		/**
 		 *  @private
 		 */
-		public static const ID:FieldDescriptor_TYPE_INT64 = new FieldDescriptor_TYPE_INT64("com.chaoslabgames.packet.LoginResp.id", "id", (1 << 3) | com.netease.protobuf.WireType.VARINT);
+		public static const ROOMID:FieldDescriptor_TYPE_INT64 = new FieldDescriptor_TYPE_INT64("com.chaoslabgames.packet.JoinCmd.roomId", "roomId", (1 << 3) | com.netease.protobuf.WireType.VARINT);
 
-		public var id:Int64;
+		public var roomId:Int64;
 
 		/**
 		 *  @private
 		 */
 		override used_by_generated_code final function writeToBuffer(output:com.netease.protobuf.WritingBuffer):void {
 			com.netease.protobuf.WriteUtils.writeTag(output, com.netease.protobuf.WireType.VARINT, 1);
-			com.netease.protobuf.WriteUtils.write_TYPE_INT64(output, this.id);
+			com.netease.protobuf.WriteUtils.write_TYPE_INT64(output, this.roomId);
 			for (var fieldKey:* in this) {
 				super.writeUnknown(output, fieldKey);
 			}
@@ -33,16 +33,16 @@ package com.chaoslabgames.packet {
 		 *  @private
 		 */
 		override used_by_generated_code final function readFromSlice(input:flash.utils.IDataInput, bytesAfterSlice:uint):void {
-			var id$count:uint = 0;
+			var roomId$count:uint = 0;
 			while (input.bytesAvailable > bytesAfterSlice) {
 				var tag:uint = com.netease.protobuf.ReadUtils.read_TYPE_UINT32(input);
 				switch (tag >> 3) {
 				case 1:
-					if (id$count != 0) {
-						throw new flash.errors.IOError('Bad data format: LoginResp.id cannot be set twice.');
+					if (roomId$count != 0) {
+						throw new flash.errors.IOError('Bad data format: JoinCmd.roomId cannot be set twice.');
 					}
-					++id$count;
-					this.id = com.netease.protobuf.ReadUtils.read_TYPE_INT64(input);
+					++roomId$count;
+					this.roomId = com.netease.protobuf.ReadUtils.read_TYPE_INT64(input);
 					break;
 				default:
 					super.readUnknown(input, tag);

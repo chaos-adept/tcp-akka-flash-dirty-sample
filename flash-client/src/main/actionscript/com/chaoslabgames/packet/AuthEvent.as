@@ -6,28 +6,24 @@ package com.chaoslabgames.packet {
 	import flash.utils.IDataOutput;
 	import flash.utils.IExternalizable;
 	import flash.errors.IOError;
-	import com.chaoslabgames.packet.Point;
 	use namespace used_by_generated_code;
 	// @@protoc_insertion_point(imports)
 
 	// @@protoc_insertion_point(class_metadata)
-	public final class Move extends com.netease.protobuf.Message {
+	public final class AuthEvent extends com.netease.protobuf.Message {
 		/**
 		 *  @private
 		 */
-		public static const POINT:RepeatedFieldDescriptor_TYPE_MESSAGE = new RepeatedFieldDescriptor_TYPE_MESSAGE("com.chaoslabgames.packet.Move.point", "point", (1 << 3) | com.netease.protobuf.WireType.LENGTH_DELIMITED, function():Class { return com.chaoslabgames.packet.Point; });
+		public static const ID:FieldDescriptor_TYPE_INT64 = new FieldDescriptor_TYPE_INT64("com.chaoslabgames.packet.AuthEvent.id", "id", (1 << 3) | com.netease.protobuf.WireType.VARINT);
 
-		[ArrayElementType("com.chaoslabgames.packet.Point")]
-		public var point:Array = [];
+		public var id:Int64;
 
 		/**
 		 *  @private
 		 */
 		override used_by_generated_code final function writeToBuffer(output:com.netease.protobuf.WritingBuffer):void {
-			for (var point$index:uint = 0; point$index < this.point.length; ++point$index) {
-				com.netease.protobuf.WriteUtils.writeTag(output, com.netease.protobuf.WireType.LENGTH_DELIMITED, 1);
-				com.netease.protobuf.WriteUtils.write_TYPE_MESSAGE(output, this.point[point$index]);
-			}
+			com.netease.protobuf.WriteUtils.writeTag(output, com.netease.protobuf.WireType.VARINT, 1);
+			com.netease.protobuf.WriteUtils.write_TYPE_INT64(output, this.id);
 			for (var fieldKey:* in this) {
 				super.writeUnknown(output, fieldKey);
 			}
@@ -37,11 +33,16 @@ package com.chaoslabgames.packet {
 		 *  @private
 		 */
 		override used_by_generated_code final function readFromSlice(input:flash.utils.IDataInput, bytesAfterSlice:uint):void {
+			var id$count:uint = 0;
 			while (input.bytesAvailable > bytesAfterSlice) {
 				var tag:uint = com.netease.protobuf.ReadUtils.read_TYPE_UINT32(input);
 				switch (tag >> 3) {
 				case 1:
-					this.point.push(com.netease.protobuf.ReadUtils.read_TYPE_MESSAGE(input, new com.chaoslabgames.packet.Point()));
+					if (id$count != 0) {
+						throw new flash.errors.IOError('Bad data format: AuthEvent.id cannot be set twice.');
+					}
+					++id$count;
+					this.id = com.netease.protobuf.ReadUtils.read_TYPE_INT64(input);
 					break;
 				default:
 					super.readUnknown(input, tag);

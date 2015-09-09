@@ -1,5 +1,6 @@
 import akka.actor.{ActorSystem, Props}
-import com.chaoslabgames.core.TaskService
+import com.chaoslabgames.auth.AuthService
+import com.chaoslabgames.core.{GameModelService, TaskService}
 import com.chaoslabgames.tcpfront.AkkaNetServerTCP
 
 /**
@@ -13,5 +14,9 @@ object Starter extends App {
 
   val actorTasks  = actorSystem.actorOf(Props[TaskService], "task")
 
-  val actorNet    = actorSystem.actorOf(AkkaNetServerTCP.props("127.0.0.1", 8889), "tcp-front")
+  val authService  = actorSystem.actorOf(Props[AuthService], "auth")
+
+  val gameModelService  = actorSystem.actorOf(Props[GameModelService], "gameModel")
+
+  val actorNet    = actorSystem.actorOf(AkkaNetServerTCP.props("127.0.0.1", 8899, actorTasks), "tcp-front")
 }

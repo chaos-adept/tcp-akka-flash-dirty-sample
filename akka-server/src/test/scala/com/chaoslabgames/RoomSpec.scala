@@ -74,12 +74,10 @@ class RoomSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSende
     }
     roomsInfo.filter(_ != targetRoom).foreach( _.users.foreach ( _.connection.expectNoMsg() ) )
   }
-
 }
 
 object RoomSpec {
   case class RoomInfo(roomData:RoomData, users:Set[AuthUser])
   case class UserCred(name:String, password:String)
   case class AuthUser(userId:Long, userCred:UserCred, session: ActorRef, connection: TestProbe)
-
 }

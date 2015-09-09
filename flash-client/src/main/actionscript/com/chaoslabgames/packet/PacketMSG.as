@@ -42,26 +42,26 @@ package com.chaoslabgames.packet {
 		/**
 		 *  @private
 		 */
-		public static const CMD:FieldDescriptor_TYPE_INT32 = new FieldDescriptor_TYPE_INT32("com.chaoslabgames.packet.PacketMSG.cmd", "cmd", (2 << 3) | com.netease.protobuf.WireType.VARINT);
+		public static const TYPE:FieldDescriptor_TYPE_INT32 = new FieldDescriptor_TYPE_INT32("com.chaoslabgames.packet.PacketMSG.type", "type", (2 << 3) | com.netease.protobuf.WireType.VARINT);
 
-		private var cmd$field:int;
+		private var type$field:int;
 
-		public function clearCmd():void {
+		public function clearType():void {
 			hasField$0 &= 0xfffffffd;
-			cmd$field = new int();
+			type$field = new int();
 		}
 
-		public function get hasCmd():Boolean {
+		public function get hasType():Boolean {
 			return (hasField$0 & 0x2) != 0;
 		}
 
-		public function set cmd(value:int):void {
+		public function set type(value:int):void {
 			hasField$0 |= 0x2;
-			cmd$field = value;
+			type$field = value;
 		}
 
-		public function get cmd():int {
-			return cmd$field;
+		public function get type():int {
+			return type$field;
 		}
 
 		/**
@@ -95,9 +95,9 @@ package com.chaoslabgames.packet {
 				com.netease.protobuf.WriteUtils.writeTag(output, com.netease.protobuf.WireType.VARINT, 1);
 				com.netease.protobuf.WriteUtils.write_TYPE_BOOL(output, ping$field);
 			}
-			if (hasCmd) {
+			if (hasType) {
 				com.netease.protobuf.WriteUtils.writeTag(output, com.netease.protobuf.WireType.VARINT, 2);
-				com.netease.protobuf.WriteUtils.write_TYPE_INT32(output, cmd$field);
+				com.netease.protobuf.WriteUtils.write_TYPE_INT32(output, type$field);
 			}
 			if (hasData) {
 				com.netease.protobuf.WriteUtils.writeTag(output, com.netease.protobuf.WireType.LENGTH_DELIMITED, 3);
@@ -113,7 +113,7 @@ package com.chaoslabgames.packet {
 		 */
 		override used_by_generated_code final function readFromSlice(input:flash.utils.IDataInput, bytesAfterSlice:uint):void {
 			var ping$count:uint = 0;
-			var cmd$count:uint = 0;
+			var type$count:uint = 0;
 			var data$count:uint = 0;
 			while (input.bytesAvailable > bytesAfterSlice) {
 				var tag:uint = com.netease.protobuf.ReadUtils.read_TYPE_UINT32(input);
@@ -126,11 +126,11 @@ package com.chaoslabgames.packet {
 					this.ping = com.netease.protobuf.ReadUtils.read_TYPE_BOOL(input);
 					break;
 				case 2:
-					if (cmd$count != 0) {
-						throw new flash.errors.IOError('Bad data format: PacketMSG.cmd cannot be set twice.');
+					if (type$count != 0) {
+						throw new flash.errors.IOError('Bad data format: PacketMSG.type cannot be set twice.');
 					}
-					++cmd$count;
-					this.cmd = com.netease.protobuf.ReadUtils.read_TYPE_INT32(input);
+					++type$count;
+					this.type = com.netease.protobuf.ReadUtils.read_TYPE_INT32(input);
 					break;
 				case 3:
 					if (data$count != 0) {

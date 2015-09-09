@@ -7,10 +7,13 @@ import akka.io.Tcp
 import akka.io.Tcp.Write
 import akka.io.TcpPipelineHandler.{Init, WithinActorContext}
 import akka.util.ByteString
-import com.chaoslabgames.core.{ActorSelectors, Cmd, Msg, TaskService}
+import com.chaoslabgames.core._
 import com.chaoslabgames.packet.PacketMSG
+import com.chaoslabgames.packet.LoginCmd
+import com.chaoslabgames.packet.RegisterCmd
 import com.chaoslabgames.session.Session
 import com.chaoslabgames.utils.ActorUtils
+import com.chaoslabgames.core.{RegisterCmd => InternalRegCmd}
 
 import scala.concurrent.duration._
 
@@ -20,17 +23,16 @@ import scala.concurrent.duration._
  */
 class TcpConnection(
                val id: Long,
-               tcpAdapter: ActorRef,
+               tcpAdapter: ActorRef, taskService:ActorRef,
                init: Init[WithinActorContext, ByteString, ByteString]
                ) extends Actor with ActorLogging {
 
   import TcpConnection._
   import context._
 
-  val taskService = ActorUtils.getSingleActorRefFromPath(context, ActorSelectors.task) //fixme move to factory actor
 
   // -----
-  val session = context.actorOf(Session.props(id, self, taskService.get)) //fixme move to factory actor
+  lazy val session = context.actorOf(Session.props(id, self, taskService)) //fixme move to factory actor
 
   // ----- heartbeat -----
   private var scheduler: Cancellable = _
@@ -41,8 +43,6 @@ class TcpConnection(
     scheduler = context.system.scheduler.schedule(period, period, self, Heartbeat)
 
     //fixme move to a builder / registrator
-
-
     log.info("Session start: {}", toString)
   }
 
@@ -69,14 +69,22 @@ class TcpConnection(
   def receiveData(data: ByteString) {
     val comm: PacketMSG = PacketMSG.parseFrom( data.toArray )
 
-    //fixme parse bytearray to an object for removing protobuf dependency
+    comm.getType match {
+      case Cmd.Auth.code =>
+        val loginPkg:LoginCmd = LoginCmd.parseFrom(comm.getData)
+        session ! AuthCmd(AuthReqData(loginPkg.getName, loginPkg.getPass))
+      case Cmd.Register.code =>
+        val pkg:RegisterCmd = RegisterCmd.parseFrom(comm.getData)
+        session ! InternalRegCmd(AuthReqData(pkg.getName, pkg.getPass))
+    }
+
     session ! comm
     log.debug("receive data")
   }
 
   def sendData(cmd: Msg, data: Array[Byte]) {
     val trp: PacketMSG.Builder = PacketMSG.newBuilder()
-    trp.setCmd(cmd.code)
+    trp.setType(cmd.code)
     trp.setData(com.google.protobuf.ByteString.copyFrom(data))
 
     val packet = trp.build().toByteArray
@@ -109,8 +117,8 @@ object TcpConnection {
   val period = 10.seconds
 
   // safe constructor
-  def props(id: Long, connect: ActorRef, init: Init[WithinActorContext, ByteString, ByteString]) = Props(
-    new TcpConnection(id, connect, init)
+  def props(id: Long, connect: ActorRef, taskService:ActorRef, init: Init[WithinActorContext, ByteString, ByteString]) = Props(
+    new TcpConnection(id, connect, taskService, init)
   )
 
   // ----- API -----

@@ -62,7 +62,7 @@ public final class PacketMSG extends
           }
           case 16: {
             bitField0_ |= 0x00000002;
-            cmd_ = input.readInt32();
+            type_ = input.readInt32();
             break;
           }
           case 26: {
@@ -133,27 +133,27 @@ public final class PacketMSG extends
     return ping_;
   }
 
-  public static final int CMD_FIELD_NUMBER = 2;
-  private int cmd_;
+  public static final int TYPE_FIELD_NUMBER = 2;
+  private int type_;
   /**
-   * <code>optional int32 cmd = 2;</code>
+   * <code>optional int32 type = 2;</code>
    *
    * <pre>
    * data
    * </pre>
    */
-  public boolean hasCmd() {
+  public boolean hasType() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional int32 cmd = 2;</code>
+   * <code>optional int32 type = 2;</code>
    *
    * <pre>
    * data
    * </pre>
    */
-  public int getCmd() {
-    return cmd_;
+  public int getType() {
+    return type_;
   }
 
   public static final int DATA_FIELD_NUMBER = 3;
@@ -173,7 +173,7 @@ public final class PacketMSG extends
 
   private void initFields() {
     ping_ = false;
-    cmd_ = 0;
+    type_ = 0;
     data_ = com.google.protobuf.ByteString.EMPTY;
   }
   private byte memoizedIsInitialized = -1;
@@ -193,7 +193,7 @@ public final class PacketMSG extends
       output.writeBool(1, ping_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt32(2, cmd_);
+      output.writeInt32(2, type_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeBytes(3, data_);
@@ -213,7 +213,7 @@ public final class PacketMSG extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(2, cmd_);
+        .computeInt32Size(2, type_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += com.google.protobuf.CodedOutputStream
@@ -338,7 +338,7 @@ public final class PacketMSG extends
       super.clear();
       ping_ = false;
       bitField0_ = (bitField0_ & ~0x00000001);
-      cmd_ = 0;
+      type_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
       data_ = com.google.protobuf.ByteString.EMPTY;
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -377,7 +377,7 @@ public final class PacketMSG extends
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.cmd_ = cmd_;
+      result.type_ = type_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000004;
       }
@@ -401,8 +401,8 @@ public final class PacketMSG extends
       if (other.hasPing()) {
         setPing(other.getPing());
       }
-      if (other.hasCmd()) {
-        setCmd(other.getCmd());
+      if (other.hasType()) {
+        setType(other.getType());
       }
       if (other.hasData()) {
         setData(other.getData());
@@ -482,50 +482,50 @@ public final class PacketMSG extends
       return this;
     }
 
-    private int cmd_ ;
+    private int type_ ;
     /**
-     * <code>optional int32 cmd = 2;</code>
+     * <code>optional int32 type = 2;</code>
      *
      * <pre>
      * data
      * </pre>
      */
-    public boolean hasCmd() {
+    public boolean hasType() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 cmd = 2;</code>
+     * <code>optional int32 type = 2;</code>
      *
      * <pre>
      * data
      * </pre>
      */
-    public int getCmd() {
-      return cmd_;
+    public int getType() {
+      return type_;
     }
     /**
-     * <code>optional int32 cmd = 2;</code>
+     * <code>optional int32 type = 2;</code>
      *
      * <pre>
      * data
      * </pre>
      */
-    public Builder setCmd(int value) {
+    public Builder setType(int value) {
       bitField0_ |= 0x00000002;
-      cmd_ = value;
+      type_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional int32 cmd = 2;</code>
+     * <code>optional int32 type = 2;</code>
      *
      * <pre>
      * data
      * </pre>
      */
-    public Builder clearCmd() {
+    public Builder clearType() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      cmd_ = 0;
+      type_ = 0;
       onChanged();
       return this;
     }

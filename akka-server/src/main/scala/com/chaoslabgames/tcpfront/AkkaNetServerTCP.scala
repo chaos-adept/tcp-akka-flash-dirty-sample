@@ -3,12 +3,12 @@ package com.chaoslabgames.tcpfront
 import java.net.InetSocketAddress
 import java.nio.ByteOrder
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{ActorRef, Actor, ActorLogging, Props}
 import akka.io.Tcp._
 import akka.io.{LengthFieldFrame, TcpPipelineHandler, TcpReadWriteAdapter, _}
 
 
-class AkkaNetServerTCP(address: String, port: Int) extends Actor with ActorLogging {
+class AkkaNetServerTCP(address: String, port: Int, taskService:ActorRef) extends Actor with ActorLogging {
   var idCounter = 0L
 
   override def preStart() {
@@ -39,7 +39,7 @@ class AkkaNetServerTCP(address: String, port: Int) extends Actor with ActorLoggi
     val init = TcpPipelineHandler.withLogger(log, framer >> new TcpReadWriteAdapter)
 
     idCounter += 1
-    val tcpSessionProps = TcpConnection.props(idCounter, sender, init)
+    val tcpSessionProps = TcpConnection.props(idCounter, sender, taskService, init)
     val tcpSession = context.actorOf(tcpSessionProps)
     val pipeline = context.actorOf(TcpPipelineHandler.props(init, sender, tcpSession))
 
@@ -51,5 +51,5 @@ class AkkaNetServerTCP(address: String, port: Int) extends Actor with ActorLoggi
 object AkkaNetServerTCP {
 
   // safe constructor
-  def props(address: String, port: Int) = Props(new AkkaNetServerTCP(address, port))
+  def props(address: String, port: Int, taskService:ActorRef) = Props(new AkkaNetServerTCP(address, port, taskService))
 }

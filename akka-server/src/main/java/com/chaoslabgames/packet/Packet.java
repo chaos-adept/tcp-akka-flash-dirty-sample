@@ -14,30 +14,55 @@ public final class Packet {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_com_chaoslabgames_packet_PacketMSG_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_chaoslabgames_packet_Login_descriptor;
+    internal_static_com_chaoslabgames_packet_LoginCmd_descriptor;
   static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_com_chaoslabgames_packet_Login_fieldAccessorTable;
+      internal_static_com_chaoslabgames_packet_LoginCmd_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_chaoslabgames_packet_LoginResp_descriptor;
+    internal_static_com_chaoslabgames_packet_RegisterCmd_descriptor;
   static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_com_chaoslabgames_packet_LoginResp_fieldAccessorTable;
+      internal_static_com_chaoslabgames_packet_RegisterCmd_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_chaoslabgames_packet_Join_descriptor;
+    internal_static_com_chaoslabgames_packet_AuthEvent_descriptor;
   static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_com_chaoslabgames_packet_Join_fieldAccessorTable;
+      internal_static_com_chaoslabgames_packet_AuthEvent_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_chaoslabgames_packet_Point_descriptor;
+    internal_static_com_chaoslabgames_packet_AuthFailed_descriptor;
   static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_com_chaoslabgames_packet_Point_fieldAccessorTable;
+      internal_static_com_chaoslabgames_packet_AuthFailed_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_chaoslabgames_packet_Move_descriptor;
+    internal_static_com_chaoslabgames_packet_JoinCmd_descriptor;
   static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_com_chaoslabgames_packet_Move_fieldAccessorTable;
+      internal_static_com_chaoslabgames_packet_JoinCmd_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_chaoslabgames_packet_LeaveCmd_descriptor;
+  static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_chaoslabgames_packet_LeaveCmd_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_chaoslabgames_packet_JoinEvent_descriptor;
+  static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_chaoslabgames_packet_JoinEvent_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_chaoslabgames_packet_LeaveEvent_descriptor;
+  static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_chaoslabgames_packet_LeaveEvent_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_chaoslabgames_packet_ChatCmd_descriptor;
+  static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_chaoslabgames_packet_ChatCmd_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_chaoslabgames_packet_ChatEvent_descriptor;
+  static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_chaoslabgames_packet_ChatEvent_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -48,13 +73,19 @@ public final class Packet {
   static {
     java.lang.String[] descriptorData = {
       "\n\014packet.proto\022\030com.chaoslabgames.packet" +
-      "\"4\n\tPacketMSG\022\014\n\004ping\030\001 \001(\010\022\013\n\003cmd\030\002 \001(\005" +
-      "\022\014\n\004data\030\003 \001(\014\"#\n\005Login\022\014\n\004name\030\001 \002(\t\022\014\n" +
-      "\004pass\030\002 \002(\t\"\027\n\tLoginResp\022\n\n\002id\030\001 \002(\003\"\006\n\004" +
-      "Join\")\n\005Point\022\n\n\002id\030\001 \002(\003\022\t\n\001x\030\002 \002(\005\022\t\n\001" +
-      "y\030\003 \002(\005\"6\n\004Move\022.\n\005point\030\001 \003(\0132\037.com.cha" +
-      "oslabgames.packet.PointB$\n\030com.chaoslabg" +
-      "ames.packetB\006PacketP\001"
+      "\"5\n\tPacketMSG\022\014\n\004ping\030\001 \001(\010\022\014\n\004type\030\002 \001(" +
+      "\005\022\014\n\004data\030\003 \001(\014\"&\n\010LoginCmd\022\014\n\004name\030\001 \002(" +
+      "\t\022\014\n\004pass\030\002 \002(\t\")\n\013RegisterCmd\022\014\n\004name\030\001" +
+      " \002(\t\022\014\n\004pass\030\002 \002(\t\"\027\n\tAuthEvent\022\n\n\002id\030\001 " +
+      "\002(\003\" \n\nAuthFailed\022\022\n\nreasonCode\030\001 \002(\005\"\031\n" +
+      "\007JoinCmd\022\016\n\006roomId\030\001 \002(\003\"\032\n\010LeaveCmd\022\016\n\006" +
+      "roomId\030\001 \002(\003\"+\n\tJoinEvent\022\016\n\006roomId\030\001 \002(" +
+      "\003\022\016\n\006userId\030\002 \002(\003\",\n\nLeaveEvent\022\016\n\006roomI" +
+      "d\030\001 \002(\003\022\016\n\006userId\030\002 \002(\003\"\'\n\007ChatCmd\022\016\n\006ro",
+      "omId\030\001 \002(\003\022\014\n\004text\030\002 \002(\t\"9\n\tChatEvent\022\016\n" +
+      "\006roomId\030\001 \002(\003\022\016\n\006userId\030\002 \002(\003\022\014\n\004text\030\003 " +
+      "\002(\tB$\n\030com.chaoslabgames.packetB\006PacketP" +
+      "\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -73,37 +104,67 @@ public final class Packet {
     internal_static_com_chaoslabgames_packet_PacketMSG_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_com_chaoslabgames_packet_PacketMSG_descriptor,
-        new java.lang.String[] { "Ping", "Cmd", "Data", });
-    internal_static_com_chaoslabgames_packet_Login_descriptor =
+        new java.lang.String[] { "Ping", "Type", "Data", });
+    internal_static_com_chaoslabgames_packet_LoginCmd_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_com_chaoslabgames_packet_Login_fieldAccessorTable = new
+    internal_static_com_chaoslabgames_packet_LoginCmd_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_com_chaoslabgames_packet_Login_descriptor,
+        internal_static_com_chaoslabgames_packet_LoginCmd_descriptor,
         new java.lang.String[] { "Name", "Pass", });
-    internal_static_com_chaoslabgames_packet_LoginResp_descriptor =
+    internal_static_com_chaoslabgames_packet_RegisterCmd_descriptor =
       getDescriptor().getMessageTypes().get(2);
-    internal_static_com_chaoslabgames_packet_LoginResp_fieldAccessorTable = new
+    internal_static_com_chaoslabgames_packet_RegisterCmd_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_com_chaoslabgames_packet_LoginResp_descriptor,
-        new java.lang.String[] { "Id", });
-    internal_static_com_chaoslabgames_packet_Join_descriptor =
+        internal_static_com_chaoslabgames_packet_RegisterCmd_descriptor,
+        new java.lang.String[] { "Name", "Pass", });
+    internal_static_com_chaoslabgames_packet_AuthEvent_descriptor =
       getDescriptor().getMessageTypes().get(3);
-    internal_static_com_chaoslabgames_packet_Join_fieldAccessorTable = new
+    internal_static_com_chaoslabgames_packet_AuthEvent_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_com_chaoslabgames_packet_Join_descriptor,
-        new java.lang.String[] { });
-    internal_static_com_chaoslabgames_packet_Point_descriptor =
+        internal_static_com_chaoslabgames_packet_AuthEvent_descriptor,
+        new java.lang.String[] { "Id", });
+    internal_static_com_chaoslabgames_packet_AuthFailed_descriptor =
       getDescriptor().getMessageTypes().get(4);
-    internal_static_com_chaoslabgames_packet_Point_fieldAccessorTable = new
+    internal_static_com_chaoslabgames_packet_AuthFailed_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_com_chaoslabgames_packet_Point_descriptor,
-        new java.lang.String[] { "Id", "X", "Y", });
-    internal_static_com_chaoslabgames_packet_Move_descriptor =
+        internal_static_com_chaoslabgames_packet_AuthFailed_descriptor,
+        new java.lang.String[] { "ReasonCode", });
+    internal_static_com_chaoslabgames_packet_JoinCmd_descriptor =
       getDescriptor().getMessageTypes().get(5);
-    internal_static_com_chaoslabgames_packet_Move_fieldAccessorTable = new
+    internal_static_com_chaoslabgames_packet_JoinCmd_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_com_chaoslabgames_packet_Move_descriptor,
-        new java.lang.String[] { "Point", });
+        internal_static_com_chaoslabgames_packet_JoinCmd_descriptor,
+        new java.lang.String[] { "RoomId", });
+    internal_static_com_chaoslabgames_packet_LeaveCmd_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_com_chaoslabgames_packet_LeaveCmd_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_com_chaoslabgames_packet_LeaveCmd_descriptor,
+        new java.lang.String[] { "RoomId", });
+    internal_static_com_chaoslabgames_packet_JoinEvent_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_com_chaoslabgames_packet_JoinEvent_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_com_chaoslabgames_packet_JoinEvent_descriptor,
+        new java.lang.String[] { "RoomId", "UserId", });
+    internal_static_com_chaoslabgames_packet_LeaveEvent_descriptor =
+      getDescriptor().getMessageTypes().get(8);
+    internal_static_com_chaoslabgames_packet_LeaveEvent_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_com_chaoslabgames_packet_LeaveEvent_descriptor,
+        new java.lang.String[] { "RoomId", "UserId", });
+    internal_static_com_chaoslabgames_packet_ChatCmd_descriptor =
+      getDescriptor().getMessageTypes().get(9);
+    internal_static_com_chaoslabgames_packet_ChatCmd_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_com_chaoslabgames_packet_ChatCmd_descriptor,
+        new java.lang.String[] { "RoomId", "Text", });
+    internal_static_com_chaoslabgames_packet_ChatEvent_descriptor =
+      getDescriptor().getMessageTypes().get(10);
+    internal_static_com_chaoslabgames_packet_ChatEvent_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_com_chaoslabgames_packet_ChatEvent_descriptor,
+        new java.lang.String[] { "RoomId", "UserId", "Text", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
