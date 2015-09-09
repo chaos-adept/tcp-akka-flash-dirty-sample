@@ -72,6 +72,7 @@ class RoomSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSende
     targetRoom.users.foreach { user =>
       user.connection.expectMsg(ChatEvent("hi room", targetRoom.roomData.roomId, author.userId))
     }
+    roomsInfo.filter(_ != targetRoom).foreach( _.users.foreach ( _.connection.expectNoMsg() ) )
   }
 
 }
