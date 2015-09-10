@@ -23,7 +23,7 @@ public class Starter extends Sprite {
     }
 
     public function onAuth(userId:Number):void {
-        trace("user was auth " + userId)
+        trace("user was auth id: " + userId)
     }
 
     public function onConnected():void {

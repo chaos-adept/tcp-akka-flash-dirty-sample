@@ -14,57 +14,68 @@ message PacketMSG
   optional bytes	data    = 3;
 }
 
-message LoginCmd
+message LoginCmdPkg
 {
   required string	name   	= 1;
   required string	pass   	= 2;
 }
 
-message RegisterCmd
+message RegisterCmdPkg
 {
   required string	name   	= 1;
   required string	pass   	= 2;
 }
 
-message AuthEvent
+message AuthEventPkg
 {
   required int64	id  	= 1;
 }
 
-message AuthFailed
+message AuthFailedPkg
 {
   required int32  reasonCode = 1;
 }
 
-message JoinCmd
+message JoinCmdPkg
 {
   required int64  roomId = 1;
 }
 
-message LeaveCmd
+message LeaveCmdPkg
 {
   required int64 roomId = 1;
 }
 
-message JoinEvent
-{
-  required int64 roomId = 1;
-  required int64 userId = 2;
-}
-
-message LeaveEvent
+message JoinEventPkg
 {
   required int64 roomId = 1;
   required int64 userId = 2;
 }
 
-message ChatCmd
+message LeaveEventPkg
+{
+  required int64 roomId = 1;
+  required int64 userId = 2;
+}
+
+message RoomMsgPkg
+{
+  required int64 roomId = 1;
+  required string name = 2;
+}
+
+message GetRoomListEventPkg
+{
+  repeated RoomMsgPkg rooms = 1;
+}
+
+message ChatCmdPkg
 {
   required int64 roomId = 1;
   required string text = 2;
 }
 
-message ChatEvent
+message ChatEventPkg
 {
   required int64 roomId = 1;
   required int64 userId = 2;

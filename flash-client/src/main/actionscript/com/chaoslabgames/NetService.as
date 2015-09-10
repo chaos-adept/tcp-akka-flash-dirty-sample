@@ -10,7 +10,9 @@ import com.awar.ags.engine.AgsEngine;
 import com.awar.ags.engine.Server;
 import com.chaoslabgames.datavalue.ServerConfig;
 import com.chaoslabgames.datavalue.UserCred;
-import com.chaoslabgames.packet.RegisterCmd;
+import com.chaoslabgames.packet.AuthEventPkg;
+import com.chaoslabgames.packet.LoginCmdPkg;
+import com.chaoslabgames.packet.RegisterCmdPkg;
 
 public class NetService
 {
@@ -61,6 +63,10 @@ public class NetService
         // ----- MAIN -----
         if( e.Cmd == CmdType.EVENT_Auth )
         {
+
+            var ae: AuthEventPkg = new AuthEventPkg();
+            ae.mergeFrom(e.Data);
+            main.onAuth(ae.id.toNumber());
 //            var lr: LoginResp = new LoginResp();
 //            lr.mergeFrom( e.Data );
 //
@@ -98,7 +104,7 @@ public class NetService
     public function register(userCred:UserCred):void {
         var packet: Packet = new Packet();
         packet.Cmd = CmdType.CMD_Register;
-        var r:RegisterCmd = new RegisterCmd();
+        var r:RegisterCmdPkg = new RegisterCmdPkg();
         r.name = userCred.name;
         r.pass = userCred.password;
         r.writeTo(packet.Data);

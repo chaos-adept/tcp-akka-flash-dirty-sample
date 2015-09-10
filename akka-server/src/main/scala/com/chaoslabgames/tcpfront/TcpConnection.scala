@@ -7,14 +7,11 @@ import akka.io.Tcp
 import akka.io.Tcp.Write
 import akka.io.TcpPipelineHandler.{Init, WithinActorContext}
 import akka.util.ByteString
-import com.chaoslabgames.core._
-import com.chaoslabgames.packet.PacketMSG
-import com.chaoslabgames.packet.LoginCmd
-import com.chaoslabgames.packet.RegisterCmd
+import com.chaoslabgames.core.{RegisterCmd => InternalRegCmd, _}
+import com.chaoslabgames.packet._
 import com.chaoslabgames.session.Session
-import com.chaoslabgames.utils.ActorUtils
-import com.chaoslabgames.core.{RegisterCmd => InternalRegCmd}
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration._
 
 /**
@@ -55,6 +52,22 @@ class TcpConnection(
 
     case _: Tcp.ConnectionClosed => Closed()
 
+    case ae:AuthEvent =>
+      val pkg = AuthEventPkg
+        .newBuilder()
+        .setId(ae.data.id).build()
+      sendData(ae.msg, pkg.toByteArray)
+    case RoomListEvent(data) =>
+      var rooms = new ListBuffer[RoomMsgPkg]();
+
+      val roomsPkgs = data.rooms.map { roomData =>
+        RoomMsgPkg.newBuilder()
+          .setRoomId(roomData.roomId)
+          .setName(roomData.name).build()
+      }
+      GetRoomListEventPkg.newBuilder()
+        .addAllRooms(roomsPkgs.toIterator)
+        .build().toByteArray
     case _ => log.info("unknown message")
   }
 
@@ -71,11 +84,13 @@ class TcpConnection(
 
     comm.getType match {
       case Cmd.Auth.code =>
-        val loginPkg:LoginCmd = LoginCmd.parseFrom(comm.getData)
+        val loginPkg:LoginCmdPkg = LoginCmdPkg.parseFrom(comm.getData)
         session ! AuthCmd(AuthReqData(loginPkg.getName, loginPkg.getPass))
       case Cmd.Register.code =>
-        val pkg:RegisterCmd = RegisterCmd.parseFrom(comm.getData)
+        val pkg:RegisterCmdPkg = RegisterCmdPkg.parseFrom(comm.getData)
         session ! InternalRegCmd(AuthReqData(pkg.getName, pkg.getPass))
+      case Cmd.GetRoomList.code =>
+        session ! GetRoomListCmd
     }
 
     session ! comm
