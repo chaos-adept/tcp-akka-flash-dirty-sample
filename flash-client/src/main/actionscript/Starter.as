@@ -3,6 +3,9 @@ package {
 import com.chaoslabgames.NetService;
 import com.chaoslabgames.datavalue.ServerConfig;
 import com.chaoslabgames.datavalue.UserCred;
+import com.chaoslabgames.packet.GetRoomListEventPkg;
+import com.chaoslabgames.packet.JoinEventPkg;
+import com.chaoslabgames.packet.RoomCreatedEventPkg;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -23,7 +26,8 @@ public class Starter extends Sprite {
     }
 
     public function onAuth(userId:Number):void {
-        trace("user was auth id: " + userId)
+        trace("user was auth id: " + userId);
+        net.createRoom("test room")
     }
 
     public function onConnected():void {
@@ -31,6 +35,19 @@ public class Starter extends Sprite {
         userCred.name = "test1";
         userCred.password = "test1";
         net.register(userCred);
+    }
+
+    public function roomList(roomList:GetRoomListEventPkg):void {
+        trace("room list: " + roomList.room);
+    }
+
+    public function roomCreated(event:RoomCreatedEventPkg):void {
+        trace("room created " + event);
+        net.join(event.roomId)
+    }
+
+    public function onJoinEvent(join:JoinEventPkg):void {
+        trace("join event " + join);
     }
 }
 }

@@ -7,6 +7,7 @@ import akka.io.Tcp
 import akka.io.Tcp.Write
 import akka.io.TcpPipelineHandler.{Init, WithinActorContext}
 import akka.util.ByteString
+import com.chaoslabgames.core.datavalue.DataValue.CreateRoomData
 import com.chaoslabgames.core.{RegisterCmd => InternalRegCmd, _}
 import com.chaoslabgames.packet._
 import com.chaoslabgames.session.Session
@@ -57,17 +58,30 @@ class TcpConnection(
         .newBuilder()
         .setId(ae.data.id).build()
       sendData(ae.msg, pkg.toByteArray)
-    case RoomListEvent(data) =>
-      var rooms = new ListBuffer[RoomMsgPkg]();
-
-      val roomsPkgs = data.rooms.map { roomData =>
+    case rl:RoomListEvent =>
+      var rooms = new ListBuffer[RoomMsgPkg]()
+      val roomsPkgs = rl.data.rooms.map { roomData =>
         RoomMsgPkg.newBuilder()
           .setRoomId(roomData.roomId)
           .setName(roomData.name).build()
       }
-      GetRoomListEventPkg.newBuilder()
-        .addAllRooms(roomsPkgs.toIterator)
+      val listPkg = GetRoomListEventPkg.newBuilder()
+      roomsPkgs.foreach(listPkg.addRoom)
+      sendData(rl.msg, listPkg.build().toByteArray)
+    case rce:RoomCreatedEvent =>
+      sendData(rce.msg, RoomCreatedEventPkg.newBuilder()
+        .setName(rce.data.name)
+        .setRoomId(rce.data.roomId)
+        .setUserId(rce.data.ownerId)
         .build().toByteArray
+      )
+    case e:JoinEvent =>
+      sendData(e.msg, JoinEventPkg.newBuilder()
+        .setRoomId(e.roomId)
+        .setUserId(e.userId)
+        .build().toByteArray
+      );
+
     case _ => log.info("unknown message")
   }
 
@@ -91,6 +105,12 @@ class TcpConnection(
         session ! InternalRegCmd(AuthReqData(pkg.getName, pkg.getPass))
       case Cmd.GetRoomList.code =>
         session ! GetRoomListCmd
+      case Cmd.CreateRoom.code =>
+        val pkg = CreateRoomCmdPkg.parseFrom(comm.getData)
+        session ! CreateRoomCmd(CreateRoomData(pkg.getName))
+      case Cmd.Join.code =>
+        val pkg = JoinCmdPkg.parseFrom(comm.getData)
+        session ! JoinCmd(pkg.getRoomId)
     }
 
     session ! comm

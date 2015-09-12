@@ -11,8 +11,13 @@ import com.awar.ags.engine.Server;
 import com.chaoslabgames.datavalue.ServerConfig;
 import com.chaoslabgames.datavalue.UserCred;
 import com.chaoslabgames.packet.AuthEventPkg;
-import com.chaoslabgames.packet.LoginCmdPkg;
+import com.chaoslabgames.packet.CreateRoomCmdPkg;
+import com.chaoslabgames.packet.GetRoomListEventPkg;
+import com.chaoslabgames.packet.JoinCmdPkg;
+import com.chaoslabgames.packet.JoinEventPkg;
 import com.chaoslabgames.packet.RegisterCmdPkg;
+import com.chaoslabgames.packet.RoomCreatedEventPkg;
+import com.netease.protobuf.Int64;
 
 public class NetService
 {
@@ -73,6 +78,24 @@ public class NetService
 //            main.addPlayer(lr.id.toNumber());
         }
 
+        if (e.Cmd == CmdType.EVENT_RoomList) {
+            var roomList:GetRoomListEventPkg = new GetRoomListEventPkg();
+            roomList.mergeFrom(e.Data);
+            main.roomList(roomList)
+        }
+
+        if (e.Cmd == CmdType.EVENT_CreateRoomEvent) {
+            var createRoomEvent:RoomCreatedEventPkg = new RoomCreatedEventPkg();
+            createRoomEvent.mergeFrom(e.Data);
+            main.roomCreated(createRoomEvent)
+        }
+
+        if (e.Cmd == CmdType.EVENT_Join) {
+            var joinEvent:JoinEventPkg = new JoinEventPkg();
+            joinEvent.mergeFrom(e.Data);
+            main.onJoinEvent(joinEvent)
+        }
+
     }
 
     public function login( login: String, pass: String ): void
@@ -89,8 +112,14 @@ public class NetService
 //        ags.send( packet );
     }
 
-    public function join(): void
+    public function join(roomId:Int64):void
     {
+        var packet:Packet = new Packet();
+        packet.Cmd = CmdType.CMD_Join;
+        var joinPkg:JoinCmdPkg = new JoinCmdPkg();
+        joinPkg.roomId = roomId;
+        joinPkg.writeTo(packet.Data);
+        ags.send( packet );
 //        var packet: Packet = new Packet();
 //        packet.Cmd = CmdType.Join;
 //
@@ -101,12 +130,22 @@ public class NetService
 //        ags.send( packet );
     }
 
+
     public function register(userCred:UserCred):void {
         var packet: Packet = new Packet();
         packet.Cmd = CmdType.CMD_Register;
         var r:RegisterCmdPkg = new RegisterCmdPkg();
         r.name = userCred.name;
         r.pass = userCred.password;
+        r.writeTo(packet.Data);
+        ags.send(packet)
+    }
+
+    public function createRoom(name:String):void {
+        var packet: Packet = new Packet();
+        packet.Cmd = CmdType.CMD_CreateRoom;
+        var r:CreateRoomCmdPkg = new CreateRoomCmdPkg();
+        r.name = name;
         r.writeTo(packet.Data);
         ags.send(packet)
     }

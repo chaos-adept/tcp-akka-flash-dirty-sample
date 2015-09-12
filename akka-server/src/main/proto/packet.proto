@@ -26,6 +26,18 @@ message RegisterCmdPkg
   required string	pass   	= 2;
 }
 
+message CreateRoomCmdPkg
+{
+  required string	name   	= 1;
+}
+
+message RoomCreatedEventPkg
+{
+  required int64 roomId = 1;
+  required int64 userId = 2;
+  required string name = 3;
+}
+
 message AuthEventPkg
 {
   required int64	id  	= 1;
@@ -66,7 +78,7 @@ message RoomMsgPkg
 
 message GetRoomListEventPkg
 {
-  repeated RoomMsgPkg rooms = 1;
+  repeated RoomMsgPkg room = 1;
 }
 
 message ChatCmdPkg
