@@ -81,6 +81,13 @@ class TcpConnection(
         .setUserId(e.userId)
         .build().toByteArray
       );
+    case e:ChatEvent =>
+      sendData(e.msg, ChatEventPkg.newBuilder()
+        .setRoomId(e.roomId)
+        .setText(e.text)
+        .setUserId(e.userId)
+        .build().toByteArray
+      );
 
     case _ => log.info("unknown message")
   }
@@ -111,6 +118,9 @@ class TcpConnection(
       case Cmd.Join.code =>
         val pkg = JoinCmdPkg.parseFrom(comm.getData)
         session ! JoinCmd(pkg.getRoomId)
+      case Cmd.ChatCmd.code =>
+        val pkg = ChatCmdPkg.parseFrom(comm.getData)
+        session ! ChatCmd(pkg.getText, pkg.getRoomId)
     }
 
     session ! comm

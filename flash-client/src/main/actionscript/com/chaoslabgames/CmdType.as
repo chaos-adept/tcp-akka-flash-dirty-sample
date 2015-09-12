@@ -9,6 +9,8 @@ public class CmdType
     public static const EVENT_RoomList: int = 15;
     public static const CMD_CreateRoom: int = 11;
     public static const CMD_Join: int = 8;
+    public static const CMD_Chat: int = 19;
+    public static const EVENT_Chat: int = 20;
     public static const EVENT_Join: int = 16;
     public static const EVENT_CreateRoomEvent: int = 12;
 }

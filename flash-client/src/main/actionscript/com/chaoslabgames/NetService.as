@@ -11,6 +11,8 @@ import com.awar.ags.engine.Server;
 import com.chaoslabgames.datavalue.ServerConfig;
 import com.chaoslabgames.datavalue.UserCred;
 import com.chaoslabgames.packet.AuthEventPkg;
+import com.chaoslabgames.packet.ChatCmdPkg;
+import com.chaoslabgames.packet.ChatEventPkg;
 import com.chaoslabgames.packet.CreateRoomCmdPkg;
 import com.chaoslabgames.packet.GetRoomListEventPkg;
 import com.chaoslabgames.packet.JoinCmdPkg;
@@ -95,6 +97,12 @@ public class NetService
             main.onJoinEvent(joinEvent)
         }
 
+        if (e.Cmd == CmdType.EVENT_Chat) {
+            var chatEvent:ChatEventPkg = new ChatEventPkg();
+            chatEvent.mergeFrom(e.Data);
+            main.onChatEvent(chatEvent)
+        }
+
     }
 
     public function login( login: String, pass: String ): void
@@ -150,7 +158,21 @@ public class NetService
     }
 
     public function listRooms():void {
+        log.info("mock room list")
+    }
 
+    public function sendChatMessage(roomId:Int64, text:String):void {
+        var packet:ChatCmdPkg = new ChatCmdPkg();
+        packet.roomId = roomId;
+        packet.text = text;
+        sendPacket(CmdType.CMD_Chat, packet)
+    }
+
+    private function sendPacket(cmd:int, args:com.netease.protobuf.Message):void {
+        var packet: Packet = new Packet();
+        packet.Cmd = cmd;
+        args.writeTo(packet.Data);
+        ags.send(packet)
     }
 }
 }
