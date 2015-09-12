@@ -30,6 +30,7 @@ public class Starter extends Sprite {
 
         DConsole.createCommand("roomList", net.listRooms);
         DConsole.createCommand("msg", sendMsg);
+
         DConsole.show();
         this.addEventListener(Event.ADDED_TO_STAGE, function (e:Event):void {
             var serverConfig:ServerConfig = new ServerConfig();

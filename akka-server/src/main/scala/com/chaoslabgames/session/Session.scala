@@ -5,7 +5,7 @@ import com.chaoslabgames.core.TaskService.CommandTask
 import com.chaoslabgames.core._
 import com.chaoslabgames.core.datavalue.DataValue.{ChatMsgData, RoomSessionInfo, AuthSessionInfo}
 import com.chaoslabgames.session.Session._
-
+import com.chaoslabgames.core.GetRoomListCmd
 /**
  * @author <a href="mailto:denis.rykovanov@gmail.com">Denis Rykovanov</a>
  *         on 06.09.2015.
@@ -30,6 +30,9 @@ class Session(val id: Long, val connection: ActorRef, val taskService: ActorRef)
   when(AuthState) {
     case Event(cmd:CreateRoomCmd, authData:Authorized) =>
       taskService ! TaskService.CreateRoomTask(authData.session, cmd.data.name)
+      stay()
+    case Event(GetRoomListCmd, authData:Authorized) =>
+      taskService ! TaskService.GetRoomListTask(authData.session)
       stay()
     case Event(cmd:JoinCmd, authData:Authorized) =>
       taskService ! TaskService.JoinTask(authData.session, cmd.roomId)

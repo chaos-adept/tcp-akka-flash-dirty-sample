@@ -6,6 +6,7 @@ public class CmdType
 
     public static const CMD_Register: int = 13;
     public static const EVENT_Auth: int = 6;
+    public static const CMD_RoomList: int = 14;
     public static const EVENT_RoomList: int = 15;
     public static const CMD_CreateRoom: int = 11;
     public static const CMD_Join: int = 8;

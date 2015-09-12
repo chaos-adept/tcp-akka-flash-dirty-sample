@@ -158,7 +158,7 @@ public class NetService
     }
 
     public function listRooms():void {
-        log.info("mock room list")
+        sendPacket(CmdType.CMD_RoomList, null)
     }
 
     public function sendChatMessage(roomId:Int64, text:String):void {
@@ -171,7 +171,9 @@ public class NetService
     private function sendPacket(cmd:int, args:com.netease.protobuf.Message):void {
         var packet: Packet = new Packet();
         packet.Cmd = cmd;
-        args.writeTo(packet.Data);
+        if (args) {
+            args.writeTo(packet.Data);
+        }
         ags.send(packet)
     }
 }
