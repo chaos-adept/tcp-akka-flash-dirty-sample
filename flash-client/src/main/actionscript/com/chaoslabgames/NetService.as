@@ -17,6 +17,8 @@ import com.chaoslabgames.packet.JoinCmdPkg;
 import com.chaoslabgames.packet.JoinEventPkg;
 import com.chaoslabgames.packet.RegisterCmdPkg;
 import com.chaoslabgames.packet.RoomCreatedEventPkg;
+import com.furusystems.logging.slf4as.ILogger;
+import com.furusystems.logging.slf4as.Logging;
 import com.netease.protobuf.Int64;
 
 public class NetService
@@ -26,6 +28,8 @@ public class NetService
     public var main: Starter;
 
     private var userCred:UserCred;
+
+    public static const log:ILogger = Logging.getLogger(NetService);
 
     public function NetService()
     {
@@ -53,41 +57,36 @@ public class NetService
         {
             main.onConnected()
         } else {
-            trace("connection failed")
+            log.error("connection failed")
         }
     }
 
     private function onDataReceived( e: Packet ): void
     {
-        trace("onDataReceived cmd: " + e.Cmd)
+
         if( e.Cmd == CmdType.Ping )
         {
-
+            return
         }
-
+        log.info("onDataReceived cmd: " + e.Cmd)
         // ----- MAIN -----
         if( e.Cmd == CmdType.EVENT_Auth )
         {
-
             var ae: AuthEventPkg = new AuthEventPkg();
             ae.mergeFrom(e.Data);
             main.onAuth(ae.id.toNumber());
-//            var lr: LoginResp = new LoginResp();
-//            lr.mergeFrom( e.Data );
-//
-//            main.addPlayer(lr.id.toNumber());
         }
 
         if (e.Cmd == CmdType.EVENT_RoomList) {
             var roomList:GetRoomListEventPkg = new GetRoomListEventPkg();
             roomList.mergeFrom(e.Data);
-            main.roomList(roomList)
+            main.onRoomList(roomList)
         }
 
         if (e.Cmd == CmdType.EVENT_CreateRoomEvent) {
             var createRoomEvent:RoomCreatedEventPkg = new RoomCreatedEventPkg();
             createRoomEvent.mergeFrom(e.Data);
-            main.roomCreated(createRoomEvent)
+            main.onRoomCreated(createRoomEvent)
         }
 
         if (e.Cmd == CmdType.EVENT_Join) {
@@ -148,6 +147,10 @@ public class NetService
         r.name = name;
         r.writeTo(packet.Data);
         ags.send(packet)
+    }
+
+    public function listRooms():void {
+
     }
 }
 }

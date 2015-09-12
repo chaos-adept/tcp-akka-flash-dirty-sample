@@ -6,6 +6,9 @@ import com.chaoslabgames.datavalue.UserCred;
 import com.chaoslabgames.packet.GetRoomListEventPkg;
 import com.chaoslabgames.packet.JoinEventPkg;
 import com.chaoslabgames.packet.RoomCreatedEventPkg;
+import com.furusystems.dconsole2.DConsole;
+import com.furusystems.logging.slf4as.ILogger;
+import com.furusystems.logging.slf4as.Logging;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -14,9 +17,14 @@ import flash.events.Event;
 public class Starter extends Sprite {
 
     public var net:NetService = new NetService();
+    public static const log:ILogger = Logging.getLogger(Starter);
 
     public function Starter() {
         net.main = this;
+        addChild(DConsole.view);
+
+        DConsole.createCommand("roomList", net.listRooms);
+        DConsole.show();
         this.addEventListener(Event.ADDED_TO_STAGE, function (e:Event):void {
             var serverConfig:ServerConfig = new ServerConfig();
             serverConfig.host = "127.0.0.1";
@@ -26,7 +34,7 @@ public class Starter extends Sprite {
     }
 
     public function onAuth(userId:Number):void {
-        trace("user was auth id: " + userId);
+        log.info("user was auth id: " + userId);
         net.createRoom("test room")
     }
 
@@ -37,17 +45,17 @@ public class Starter extends Sprite {
         net.register(userCred);
     }
 
-    public function roomList(roomList:GetRoomListEventPkg):void {
-        trace("room list: " + roomList.room);
+    public function onRoomList(roomList:GetRoomListEventPkg):void {
+        log.info("room list: " + roomList.room);
     }
 
-    public function roomCreated(event:RoomCreatedEventPkg):void {
-        trace("room created " + event);
+    public function onRoomCreated(event:RoomCreatedEventPkg):void {
+        log.info("room created " + event);
         net.join(event.roomId)
     }
 
     public function onJoinEvent(join:JoinEventPkg):void {
-        trace("join event " + join);
+        log.info("join event " + join);
     }
 }
 }
