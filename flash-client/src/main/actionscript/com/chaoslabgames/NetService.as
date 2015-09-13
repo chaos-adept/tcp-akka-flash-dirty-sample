@@ -17,6 +17,8 @@ import com.chaoslabgames.packet.CreateRoomCmdPkg;
 import com.chaoslabgames.packet.GetRoomListEventPkg;
 import com.chaoslabgames.packet.JoinCmdPkg;
 import com.chaoslabgames.packet.JoinEventPkg;
+import com.chaoslabgames.packet.LeaveCmdPkg;
+import com.chaoslabgames.packet.LeaveEventPkg;
 import com.chaoslabgames.packet.RegisterCmdPkg;
 import com.chaoslabgames.packet.RoomCreatedEventPkg;
 import com.furusystems.logging.slf4as.ILogger;
@@ -103,6 +105,12 @@ public class NetService
             main.onChatEvent(chatEvent)
         }
 
+        if (e.Cmd == CmdType.EVENT_Leave) {
+            var leaveEvent:LeaveEventPkg = new LeaveEventPkg();
+            leaveEvent.mergeFrom(e.Data);
+            main.onLeaveEvent(leaveEvent);
+        }
+
     }
 
     public function login( login: String, pass: String ): void
@@ -175,6 +183,12 @@ public class NetService
             args.writeTo(packet.Data);
         }
         ags.send(packet)
+    }
+
+    public function leave(roomId:Int64):void {
+        var pkg:LeaveCmdPkg = new LeaveCmdPkg();
+        pkg.roomId = roomId;
+        sendPacket(CmdType.CMD_Leave, pkg);
     }
 }
 }

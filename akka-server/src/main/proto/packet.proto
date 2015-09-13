@@ -73,7 +73,8 @@ message LeaveEventPkg
 message RoomMsgPkg
 {
   required int64 roomId = 1;
-  required string name = 2;
+  required int64 ownerId = 2;
+  required string name = 3;
 }
 
 message GetRoomListEventPkg

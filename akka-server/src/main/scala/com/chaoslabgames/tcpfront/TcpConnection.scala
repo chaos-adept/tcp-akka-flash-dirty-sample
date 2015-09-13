@@ -63,6 +63,7 @@ class TcpConnection(
       val roomsPkgs = rl.data.rooms.map { roomData =>
         RoomMsgPkg.newBuilder()
           .setRoomId(roomData.roomId)
+          .setOwnerId(roomData.ownerId)
           .setName(roomData.name).build()
       }
       val listPkg = GetRoomListEventPkg.newBuilder()
@@ -85,6 +86,12 @@ class TcpConnection(
       sendData(e.msg, ChatEventPkg.newBuilder()
         .setRoomId(e.roomId)
         .setText(e.text)
+        .setUserId(e.userId)
+        .build().toByteArray
+      );
+    case e:LeaveEvent =>
+      sendData(e.msg, LeaveEventPkg.newBuilder()
+        .setRoomId(e.roomId)
         .setUserId(e.userId)
         .build().toByteArray
       );
@@ -121,6 +128,9 @@ class TcpConnection(
       case Cmd.ChatCmd.code =>
         val pkg = ChatCmdPkg.parseFrom(comm.getData)
         session ! ChatCmd(pkg.getText, pkg.getRoomId)
+      case Cmd.Leave.code =>
+        val pkg = LeaveCmdPkg.parseFrom(comm.getData)
+        session ! LeaveCmd(pkg.getRoomId)
     }
 
     session ! comm
