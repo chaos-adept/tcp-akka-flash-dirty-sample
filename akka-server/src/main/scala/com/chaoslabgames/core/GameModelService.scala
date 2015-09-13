@@ -1,20 +1,27 @@
 package com.chaoslabgames.core
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Cancellable, Actor, ActorLogging}
 import com.chaoslabgames.core.GameModelService._
 import com.chaoslabgames.core.datavalue.DataValue.{AuthSessionInfo, ChatMsgData, RoomData, RoomListData}
-
+import akka.actor._
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, HashSet}
-
+import scala.concurrent.duration._
 /**
  * @author <a href="mailto:denis.rykovanov@gmail.com">Denis Rykovanov</a>
  *         on 08.09.2015.
  */
 class GameModelService extends Actor with ActorLogging {
+  import context._
 
   var idCounter: Long = 0l
   val rooms = new mutable.HashMap[Long, Room]
+
+  private var scheduler: Cancellable = _
+
+  override def preStart() = {
+    scheduler = context.system.scheduler.schedule(500.millis, 500.millis, self, GlobalStatus)
+  }
 
   override def receive = {
     case CreateRoom(session, roomName) =>
@@ -52,6 +59,13 @@ class GameModelService extends Actor with ActorLogging {
           user ! ChatEvent(data.text, data.author.userId, data.roomId)
         )
       }
+    case GlobalStatus =>
+      rooms.foreach { case (roomId, room) =>
+        room.users.foreach(user =>
+          user ! ChatEvent("big bro is watching you.", -1, roomId)
+        )
+      }
+
   }
 }
 
@@ -62,4 +76,5 @@ object GameModelService {
   case class LeaveRoom(session:AuthSessionInfo, roomId:Long)
   case class ListRoom(session:AuthSessionInfo)
   case class Chat(data:ChatMsgData)
+  object GlobalStatus
 }
